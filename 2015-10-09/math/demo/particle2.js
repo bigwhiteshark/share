@@ -11,9 +11,7 @@ define(function(require) {
     var mouseY = 0;
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
-
-    var RADIUS = 200;
-    var QUANTITY = 200;
+    var isDraw;
 
     var camera;
     var scene;
@@ -21,67 +19,39 @@ define(function(require) {
 
     init();
 
-    function init() {
+    function init(){
         var container = document.createElement('div');
         document.body.appendChild(container);
         camera = new Camera3D();
-        camera.fov = 30;
         scene = new Scene3D();
         renderer = new CanvasRenderer(scene, camera);
         renderer.setSize(window.innerWidth, window.innerHeight);
         container.appendChild(renderer.viewport);
-        createParticles();
         loop();
-    }
-
-    function createParticles() {
-        for (var i = 0; i < QUANTITY; i++) {
-            var material = new Color();
-            material.setRGBA(random(1, 255), random(1, 255), random(1, 255), 1);
-            var particle = new Particle(material, random(1, 15), 10);
-
-            particle.position.x = 0;
-            particle.position.y = 0;
-            particle.position.z = 0;
-
-            particle.offset = {
-                x: 0,
-                y: 0,
-                z: 0
-            };
-            particle.shift = {
-                x: 0,
-                y: 0
-            };
-            particle.speed = 0.01 + Math.random() * 0.04;
-            particle.targetSize = particle.size;
-
-            scene.addObject(particle);
-        }
     }
 
     function render() {
         var len = scene.objects.length;
-        for (var i = 0; i < len; i++) {
-            var particle = scene.objects[i];
+        for (var i = 0; i < len; ++i) {
+            var object = scene.objects[i];
+            scene.objects[i].rotateY((windowHalfX - mouseX) * .009);
+            scene.objects[i].rotateX((windowHalfY - mouseY) * .009);
+        }
 
-            particle.speed = 0.01 + Math.random() * 0.04;
-            particle.offset.x += particle.speed;
-            particle.offset.y += particle.speed;
+        if (isDraw) {
+            var range = [-150, 150];
+            var material = new Color();
+            material.setRGBA(random(1, 255), random(1, 255), random(1, 255), 1);
+            var particle = new Particle(material, random(1, 15));
+            particle.position = new Vector3(mouseX -windowHalfX, mouseY - windowHalfY, 1);
+            scene.addObject(particle);
+        }
 
-            particle.shift.x += (mouseX - particle.shift.x) * (particle.speed);
-            particle.shift.y += (-mouseY - particle.shift.y) * (particle.speed);
-
-            particle.position.x = particle.shift.x + Math.cos(i + particle.offset.x) * RADIUS;
-            particle.position.y = particle.shift.y + Math.sin(i + particle.offset.y) * RADIUS;
-
-            particle.position.z = i / QUANTITY * RADIUS;
-
-            particle.size += Math.floor((particle.targetSize - particle.size) * 0.05);
-
-            if (Math.round(particle.size) == Math.round(particle.targetSize)) {
-                particle.targetSize = 1 + Math.random() * 10;
-            }
+        for (var i = 0; i < len; ++i) {
+            var object = scene.objects[i];
+            object.rotateY((windowHalfX - mouseX) * .007);
+            object.rotateX((windowHalfY - mouseY) * .007);
+            object.material.setAlpha(object.material.a - .01)
         }
 
         renderer.render(scene, camera);
@@ -95,6 +65,7 @@ define(function(require) {
     document.addEventListener('mousedown', onDocumentMouseDown, false);
 
     function onDocumentMouseDown(event) {
+        isDraw = true;
         event.preventDefault();
 
         document.addEventListener('mousemove', onDocumentMouseMove, false);
@@ -102,11 +73,12 @@ define(function(require) {
     }
 
     function onDocumentMouseMove(event) {
-        mouseX = event.clientX - windowHalfX;
-        mouseY = event.clientY - windowHalfY;
+        mouseX = event.clientX;
+        mouseY = event.clientY;
     }
 
     function onDocumentMouseUp(event) {
+        isDraw = false;
         document.removeEventListener('mousemove', onDocumentMouseMove, false);
         document.removeEventListener('mouseup', onDocumentMouseUp, false);
     }

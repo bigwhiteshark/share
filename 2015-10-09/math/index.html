@@ -1,0 +1,1445 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>数学及几何意义</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>数学及几何意义</h1>
+					<h3>图形学编程基本数学知识</h3>
+					<p>
+						<small>Created by <a href="https://github.com/bigwhiteshark/">bigwhiteshark</a></small>
+					</p>
+				</section>
+
+                <section>
+                    <h2>数学</h2>
+                    <ul>
+                        <li>坐标系</li>
+                        <li>点和直线</li>
+                        <li>相关几何知识</li>
+                        <li>三角函数</li>
+                        <li>向量运算</li>
+                        <li>矩阵运算</li>
+                        <li>变换</li>
+                    </ul>
+                </section>
+
+				<section>
+					<h2>笛卡儿坐标系</h2>
+					<p>
+					<img class="fragment"  style="vertical-align: middle"  width="372"  src="img/coordinate.png">
+					<img class="fragment"  style="vertical-align: middle"  height="252"  src="img/coordinate-system1.jpg">
+					</p>
+					<aside class="notes">
+					世界坐标系、观察坐标系或用户坐标系、投影坐标系、屏幕坐标系
+					</aside>
+				</section>
+
+				<section>
+					<h2>点</h2>
+                    <p>
+                    	<img  src="img/point1.png">
+                    	<img  src="img/coordinate-system2.jpg">
+                    </p>
+                    <ul>
+						<li class="fragment">在2D 平面上用一个2 元组表示(x, y)</li>
+						<li class="fragment">在3D 位置上用一个3 元组表示(x, y, z)</li>
+                    </ul>
+					<aside class="notes">
+						在屏幕上或3D空间内用数值表示一个位置
+					</aside>
+				</section>
+
+				<section>
+					<h2>直线</h2>
+					<p>
+						<img width="372"  src="img/line.png">
+					</p>
+					<p style="text-align: left" >是点在空间内沿相同或相反方向运动的轨迹。由无数个点构成。</p>
+				</section>
+
+				<section>
+					<h2>直线的方程式</h2>
+						<table style="font-size:22px">
+						<thead>
+							<tr>
+								<th width="100px">名称</th>
+								<th>方程式</th>
+								<th>局限性</th>
+								<th>对称轴</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr style="color:yellow">
+								<td>点斜式</td>
+								<td>`y-y_1 = k(x - x_1) (a≠0)`</td>
+								<td>`k`存在</td>
+								<td>`(x_1,y_1)`是直线上一个定点，`k`为斜率</td>
+							</tr>
+							<tr style="color:yellow">
+								<td>斜截式</td>
+								<td>`y=kx+b`</td>
+								<td>`k`存在</td>
+								<td>`k`是斜率，`b`是`y`轴上的截距</td>
+							</tr>
+							<tr style="color:yellow">
+								<td>两点式</td>
+								<td>`(y - y_1)/(y_2 - y_1) = (x - x_1)/(x_2-x_1)`</td>
+								<td>`(x_1≠x_2,y_1≠y_2)`</td>
+								<td>`(x_1,y_1)`、`(x_2,y_2)`是直线上的两个定点</td>
+							</tr>
+							<tr style="color:yellow">
+								<td>截距式</td>
+								<td>`x/a + y/b = 1`</td>
+								<td>`(a≠0,b≠0)`</td>
+								<td>`a`是`x`轴上的非零截距,`b`是`y`轴上的非零截距</td>
+							</tr>
+							<tr>
+								<td>一般式</td>
+								<td>`ax+by+c = 0`</td>
+								<td>`a`、`b`不同时为0</td>
+								<td>当`b≠0`时，斜率是`-a/b`,`y`轴上的截距是`-c/b`</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+
+				<section>
+					<h2>直线的属性</h2>
+					<p>
+						<img width="460" src="img/slope.png">
+					</p>
+					<p class="fragment">
+						<ol>
+							<li>斜率相等的两条直线平行</li>
+							<li>斜率为负值，表示直线沿左上角到右下角延伸</li>
+							<li>斜率为正值，表示直线沿左下角到右上角延伸</li>
+							<li>斜率为0，直线为水平线，和x轴平行</li>
+							<li>分母为0，表示直线为垂直型，和y轴平行</li>
+							<li>相互垂直的直线斜率的积为-1</li>
+						</ol>
+					</p>
+				</section>
+
+				<section>
+					<h2>直线的几何意义</h2>
+					<p>
+						<ol>
+							<li>如果两直线的斜率不相等，则有一组解，该解为两直线交点</li>
+							<li>如果两直线的斜率以及在y轴上的截距相等，则有无穷组解，即两直线重叠</li>
+							<li>如果两直线的斜率以及在y轴上的截距不相等，则无解，即两直线平行</li>
+						</ol>
+					</p>
+				</section>
+
+				<section>
+					<h2>在相交中的应用</h2>
+					<p>&nbsp;</p>
+					<p>
+					<pre><code data-trim contenteditable>
+/*
+    输入：
+    point1:位于第一条直线上的一个2D点；
+    scope1:第一条直线的斜率
+    point2:位于第二条直线上的一个2D点
+    scope2:第二条直线的斜率
+    输出：相交的点
+*/
+function line_intersect(point1,scope1,point2,scope2){
+    var x = (scope1*point1.x - scope2*point2.x + point2.y - point1.y)
+     		/(scope1 - scope2);
+    var y = scope1 * (x - point1.x) + point1.y;
+    return new Point(Math.ceil(x),Math.ceil(y));
+}
+					</code></pre>
+					</p>
+					<p>两直线相交 <a target="_blank" href="demo/LineIntersect.html">示例</a>.</p>
+				</section>
+
+				<section>
+					<h2>相关几何知识</h2>
+                    <ul>
+                        <li>两点间的距离</li>
+                        <li>两点的中点坐标</li>
+                        <li>抛物线</li>
+                        <li>圆和球</li>
+                        <li>在碰撞检测中的应用</li>
+                    </ul>
+				</section>
+
+				<section>
+					<h2>勾股定理</h2>
+					<p>
+						<img  src="img/gougu.png">
+					</p>
+					<p>
+						`a^2 + b^2 = c `
+					</p>
+					<p>
+						`a`、`b` 为直角三角形的两条直角边，`c` 为斜边。 
+					</p>
+				</section>
+
+				<section>
+					<h2>两点间的距离</h2>
+					<p style="text-align: left">
+						2D空间中的距离公式:
+					</p>
+					<p>
+						`P_1P_2 = sqrt((x_2-x_1)^2+(y_2-y_1)^2) .`
+					</p>
+					<p style="text-align: left">
+						其中`P_1(x_1, y_1)`和`P_2(x_2, y_2)`,分别为线上的点。
+					</p>
+					<p style="text-align: left">
+						3D空间中的距离公式:
+					</p>
+					<p>
+						`P_1P_2 = sqrt((x_2-x_1)^2+(y_2-y_1)^2+(z_2-z_1)^2) .`
+					</p>
+					<p style="text-align: left">
+						其中`P_1(x_1, y_1, z_1)`和`P_2(x_2, y_2, z_2)`,分别为线上的点。
+					</p>
+				</section>
+
+				<section>
+					<h2>两点的中点坐标</h2>
+					<p style="text-align: left">
+						2D空间中的中点公式:
+					</p>
+					<p>
+						`M((x_2+x_1)/2,(y_2+y_1)/2) .`
+					</p>
+					<p style="text-align: left">
+						为`P_1(x_1, y_1)`和`P_2(x_2, y_2)`的中点。
+					</p>
+					<p style="text-align: left">
+						3D空间中的距离公式:
+					</p>
+					<p>
+						`M((x_2+x_1)/2,(y_2+y_1)/2,(z_2+z_1)/2) .`
+					</p>
+					<p style="text-align: left">
+						为`P_1(x_1, y_1, z_1)`和`P_2(x_2, y_2, z_2)`的中点。
+					</p>
+				</section>
+
+				<section>
+					<h2>抛物线</h2>
+					<p>
+						<img width="200" src="img/parabola.jpg">
+					</p>
+					<p style="text-align: left">平面内，到定点与定直线的距离相等的点的轨迹叫做抛物线。其中定点叫抛物线的焦点，定直线叫抛物线的准线。</p>
+					<aside class="notes">
+						抛物线总是轴对称的。
+						有两个因素决定了抛物线的形状，第一是顶点，是抛物线的与对称轴的交点；第二个是对称轴。
+						抛物线有2 种形状，一种是对称轴垂直，一种是对称轴水平。
+					</aside>
+				</section>
+				<section>
+					<h2>抛物线的方程式</h2>
+					<table style="font-size:24px">
+						<thead>
+							<tr>
+								<th>名称</th>
+								<th>方程式</th>
+								<th>顶点</th>
+								<th>对称轴</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr style="color:yellow">
+								<td>顶点式</td>
+								<td>`y=a(x - h)^2 + k  (a≠0)`</td>
+								<td>`(h, k)`</td>
+								<td>`x = h`</td>
+							</tr>
+							<tr style="color:yellow">
+								<td>交点式</td>
+								<td>`y=a(x-x_1)(x-x_2)  (a≠0)`</td>
+								<td colspan="2">其中`x_1`，`x_2`是方程的两个实根。</td>
+							</tr>
+							<tr>
+								<td>一般式</td>
+								<td>`y=ax^2+bx+c (a≠0)`</td>
+								<td>`(-b/(2a), (4ac-b^2)/4a)`</td>
+								<td>`x = -b/(2a)`</td>
+							</tr>
+						</tbody>
+					</table>
+					<p style="font-size:24px;text-align: left">
+						常数a 代表了抛物线的开口方向和开口大小。`a` 的绝对值越大，开口越小;`a`是正数，开口向上或向右，`a`是负数，开口向下或向左。
+					</p>
+					<img style="vertical-align:middle;width:193px" src="img/parabola3.png" />
+					<img style="vertical-align:middle;width:187px" src="img/parabola4.png" />
+					<img style="vertical-align:middle;width:210px" src="img/parabola1.png" />
+					<img style="vertical-align:middle;width:210px" src="img/parabola2.png" />
+					<aside class="notes">
+						已知三个点的坐标对应值，选择一般式；
+						已知顶点坐标或对称轴或最值，选择顶点式；
+						已知抛物线与x轴的两个交点坐标，选择交点式。
+					</aside>
+				</section>
+
+				<section>
+					<h2>圆</h2>
+					<p>
+						<img width="200" src="img/circle.png">
+					</p>
+					<p style="text-align: left">在同一平面内到定点的距离等于定长的点的集合叫做圆。</p>
+				</section>
+
+				<section>
+					<h2>圆的方程式</h2>
+					<p>&nbsp;</p>
+					<table>
+						<thead>
+							<tr  style="font-size:22px">
+								<th width="120px">名称</th>
+								<th>方程式</th>
+								<th>条件</th>
+								<th>圆心</th>
+								<th>半径</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr style="color:yellow;font-size:22px;">
+								<td>标准式</td>
+								<td>`(x - h)^2 + (y - k)^2 = r^2`</td>
+								<td>`r > 0`</td>
+								<td>`(h,k)`</td>
+								<td>`r`</td>
+							</tr>
+							<tr style="font-size: 18px;">
+								<td style="font-size: 22px;">一般式</td>
+								<td>`x^2+y^2+Dx+Ey+F=0`</td>
+								<td>`D^2 + E^2 - 4F > 0 `</td>
+								<td>`(-D/2,-E/2)`</td>
+								<td>`1/2sqrt(D^2 + E^2 - 4F)`</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+
+
+				<section>
+					<h2>圆的碰撞检测</h2>
+					<p style="text-align: left">
+						设两圆方程分别为
+					</p>
+					<p>
+						`(x - h_1)^2 + (y - k_1)^2 = r_1^2` <br/> `(x - h_2)^2 + (y - k_2)^2 = r_2^2`
+					</p>
+					<p style="text-align: left">
+						如果`(h_2-h_1)^2+(k_2-k_1)^2 <= (r_1+r_2)^2` 则两圆相撞。
+					</p>
+					<aside class="notes">
+						由于开方运算会占用大量的处理器资源，所以建议使用平方进行比较。
+						利用圆边界进行碰撞检测是一种较快的方法，但是极有可能会产生错误的碰撞检测结
+						果，所以避免错误的方法是寻找一种更适合的图形来检测。只要这个图形可以用数学公式表
+						示出来。也可以使用多重圆形进行多重检测，先检测外面的圆，如果发生碰撞则检测内部的
+						圆，减小错误判断的几率。但多重检测会消耗更多的CPU 时间。
+					</aside>
+				</section>
+
+
+				<section>
+					<h2>球</h2>
+					<p>
+						<img width="200" src="img/ball.png">
+					</p>
+					<p style="text-align: left">
+						空间中到定点的距离等于定长的所有点组成的图形叫做球，如图右图所示的图形为球体。球体是一个连续曲面的立体图形，由球面围成的几何体称为球体。
+					</p>
+				</section>
+
+				<section>
+					<h2>球的方程式</h2>
+					<table>
+						<thead>
+							<tr  style="font-size:22px">
+								<th width="100px">名称</th>
+								<th>方程式</th>
+								<th>条件</th>
+								<th>球心</th>
+								<th>半径</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr style="color:yellow;font-size:22px;">
+								<td>标准式</td>
+								<td>`(x - h)^2 + (y - k)^2 + (z - l)^2 = r^2`</td>
+								<td>`r > 0`</td>
+								<td>`(h,k,l)`</td>
+								<td>`r`</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+
+				<section>
+					<h2>球的碰撞检测</h2>
+					<p style="text-align: left">
+						设两球方程分别为
+					</p>
+					<p>
+						`(x - h_1)^2 + (y - k_1)^2 + (z - l_1)^2 = r_1^2`  `(x - h_2)^2 + (y - k_2)^2 + (z - l_2)^2 = r_2^2`
+					</p>
+					<p style="text-align: left">
+						如果`(h_2-h_1)^2+(k_2-k_1)^2 + (l_2-l_1)^2 <= (r_1+r_2)^2` 则两圆相撞。
+					</p>
+					<aside class="notes">
+						由于开方运算会占用大量的处理器资源，所以建议使用平方进行比较。
+					</aside>
+				</section>
+
+				<section>
+					<h2>在碰撞检测中的应用</h2>
+					<p>
+					<pre><code data-trim contenteditable>
+function checkball1Collision(ball1,ball2){
+    var radius1 = ball1.radius;
+    var radius2 = ball2.radius;
+
+    var x1 = ball1.x, y1 = ball1.y;
+    var x2 = ball2.x, y2 = ball2.y;
+
+    return Math.pow(y2-y1,2)+Math.pow(x2-x1,2) <= Math.pow(radius1+radius2,2); 
+}
+					</code></pre>
+					</p>
+					<p>碰撞检测 <a target="_blank" href="demo/BallCollision.html">示例</a>.</p>
+				</section>
+				<section>
+					<h2>三角函数</h2>
+                    <ul>
+                        <li>角度与弧度</li>
+                        <li>三角函数</li>
+                        <li>三角函数的性质</li>
+                    </ul>
+				</section>
+
+				<section>
+					<h2>角度与弧度</h2>
+					<p>
+						<img width="200" src="img/rad.jpg">
+					</p>
+					<p>`角度 times (pi^R/180^circ) = 弧度`</p>
+					<p>`弧度 times (180^circ/pi^R) = 角度`</p>
+				</section>
+
+				<section>
+					<h2>三角函数</h2>
+					<p>
+						<img width="200" src="img/sanjiao.png">
+					</p>
+					<table style="font-size: 28px">
+						<thead>
+							<tr>
+								<th>正弦</th>
+								<th>余弦</th>
+								<th>正切</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>`sin(a)=b/c`</td>
+								<td>`cos(a)=a/c` </td>
+								<td>`tan(a)=b/a`</td>
+							</tr>
+							<tr>
+								<th>正割</th>
+								<th>余割</th>
+								<th>余切</th>
+							</tr>
+							<tr>
+								<td>`csc(a) = 1/sin(a) = c/b`</td>
+								<td>`sec(a) = 1/cos(a) = c/a` </td>
+								<td>`cot(a) = 1/tan(a) = a/b`</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+
+				<section>
+					<h2>常用角度的三角函数值</h2>
+					<p>
+						<img src="img/sanjiaobiao.png">
+					</p>
+					<aside class="notes">
+						在真正进入游戏主循环之前，可以建立一个三角函数的查找表，这样在游戏中需要用到三角函数值的时候就不用重新计算，只需进行查表工作就可以，大大加快运行速度。
+					</aside>
+				</section>
+
+				<section>
+					<h2>常用角度的三角函数值</h2>
+					<p style="text-align: left;font-size:30px;">三角函数：</p>
+					<p style="text-align: left;font-size:30px;margin-left:60px">角的正弦值在第一、第二象限是正值；</p>
+					<p style="text-align: left;font-size:30px;margin-left:60px">角的余弦值在第一、第四象限是正值；</p>
+					<p style="text-align: left;font-size:30px;margin-left:60px">角的正切值在第一、第三象限是正值；</p>
+					<p style="text-align: left;font-size:30px;">反三角函数：</p>
+                    <p style="text-align: left;font-size:30px;margin-left:60px">如果传入的参数是正值，那么它们的返回值都是正，即意味着该角位于第一象限； </p>
+                    <p style="text-align: left;font-size:30px;margin-left:60px">如果传入的参数为负数，那么反正弦asin()和反正切atan()的返回角度将位于第四象限，而反余弦acos()的返回角度位于第二象限。</p>
+					<aside class="notes">
+						
+					</aside>
+				</section>
+
+				
+				<section>
+					<h2>正弦函数的图像</h2>
+					<p style="text-align: left">
+						对于正弦函数：
+					</p>
+					<p style="font-size: 30px;text-align: left;text-indent:60px">
+						`y = Asin(Bx) + C`,振幅是`A`，周期是`360^circ/abs(B)`,偏移`x`轴 `C`
+					</p>
+					<p style="font-size: 30px;text-align: left;text-indent:60px">A 越大，振幅越高</p>
+					<p style="font-size: 30px;text-align: left;text-indent:60px">B 越大，周期越小</p>
+					<aside class="notes">
+						
+					</aside>
+				</section>
+
+				<section>
+					<h2>三角函数的性质</h2>
+					<table style="font-size: 24px">
+						<tbody>
+							<tr>
+								<td>单位圆性质</td>
+								<td>`cos^2a + sin^2a = 1`</td>
+							</tr>
+							<tr>
+								<td>正切和余切性质</td>
+								<td>`tana=sina/cosa` 、`cota=cosa/sina`</td>
+							</tr>
+							<tr>
+								<td>正弦函数的和与差</td>
+								<td><p>`sin(a+b) = sinacosb + cosasinb` </p> <p>`sin(a-b) = sinacosb - cosasinb`</p></td>
+							</tr>
+							<tr>
+								<td>余弦函数的和与差</td>
+								<td><p>`cos(a+b) = cosacosb - sinasinb` </p> <p>`cos(a-b) = cosacosb + sinasinb`</p></td>
+							</tr>
+							<tr>
+								<td>间接关系</td>
+								<td>
+									<p>`sin(90^circ+a)=cosa` 、`sin(180^circ-a)=sina`</p>
+									<p>`cos(90^circ-a)=sina` 、`cos(180^circ+a)=cosa`</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+
+				<section>
+					<h2>向量运算</h2>
+                    <ul>
+                        <li>向量与标量</li>
+                        <li>极坐标与笛卡儿坐标</li>
+                        <li>向量加法与减法</li>
+                        <li>标量与向量相乘</li>
+                        <li>点乘与叉乘</li>
+                    </ul>
+				</section>
+
+				<section>
+					<h2>向量与标量</h2>
+					<p>&nbsp;</p>
+					<p>标量 = 只有大小的量</p>
+					<p>向量 = 大小 + 方向&nbsp;&nbsp;&nbsp;</p>
+					<p><img src="img/xiangliang.png"></p>
+					<aside class="notes">
+						正负号可以用来确定向量的方向
+					</aside>
+				</section>
+
+				<section>
+					<h2>向量的表示</h2>
+					<p>
+					<pre><code data-trim contenteditable>
+//二维向量的分量表现形式
+function Vector2(){
+	this.x = x || 0;
+	this.y = y || 0;
+}
+
+//二维向量的极坐标表现形式
+function Polar(mag,dir){
+	this.mag = mag；
+	this.dir = dir;
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>极坐标与笛卡儿坐标</h2>
+					<p style="text-align: left;font-size: 24px;">直角坐标点是`(x,y)` </p>
+					<p style="text-align: left;font-size: 24px;">极坐标是`(ρ,θ)`，ρ表示极径，θ表示极径与极轴(相当于x的正半轴)夹角</p>
+					<p style="text-align: left;font-size: 24px;">`x=ρcosθ`</p>
+					<p style="text-align: left;font-size: 24px;">`y=ρsinθ`</p>
+					<p style="text-align: left;font-size: 24px;">由上述二公式，可得到从直角坐标系中x和 y两坐标如何计算出极坐标下的坐标
+						`θ=arctany/x`( x不等于0)
+					</p>
+					<p><img src="img/polar.jpg"></p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>极坐标与笛卡儿坐标</h2>
+					<p style="text-align: left;font-size: 24px;;">极坐标</p>
+					<p style="text-align: left;text-indent: 50px;font-size: 20px;">向量 `\vec {A} = ║A║  ©  θ`，其中，║A║为向量`\vec {A}`的模， `θ`为方向角</p>
+					<p style="text-align: left;font-size: 24px;">笛卡尔坐标(分量)</p>
+					<p style="text-align: left;text-indent: 50px;font-size: 20px;">向量 `\vec {B} = b_1\hat i + b_2\hat j`，其中，`\hat i`和`\hat j`分别为x和y方向上的单位向量</p>
+					<p style="text-align: left;font-size: 24px;">极坐标转换成笛卡尔坐标</p>
+					<p style="text-align: left;text-indent: 50px;font-size: 20px;">对于向量`\vec {A} = ║A║  ©  θ`，`A = a_1\hat i + a_2\hat j`。其中，`a_1 = ║A║cosθ`和`a_2 = ║A║sinθ`</p>
+					<p style="text-align: left;font-size: 24px;">笛卡尔坐标转换成极坐标</p>
+					<p style="text-align: left;text-indent: 50px;font-size: 20px;">对于向量`\vec {B} = b_1\hat i + b_2\hat j`，`║B║= sqrt(b_1^2 + b_2^2)`,`θ=tan^-1(b_2/b_1)`</p>
+					<p><img src="img/xlbiaoshi.png"></p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>极坐标与笛卡儿坐标向量互转</h2>
+					<p>
+					<pre><code data-trim contenteditable>
+//2D向量极坐标转换成向量分量形式
+function vectorToPolar(polar) {
+    var mag = polar.mag;
+    var dir = polar.dir;
+
+    var x = mag * Math.cos(dir * Math.PI / 180);
+    var y = mag * Math.sin(dir * Math.PI / 180);
+
+    return new Vector2(x, y);
+}
+
+//2D向量分量形式转换成向量极坐标
+function polarToVector(vector) {
+    var x = vector.x;
+    var y = vector.y;
+    var mag = Math.sqrt(x * x + y * y);
+    if (mag == 0) {
+        return new Polar(0, 0);
+    }
+    var dir = (180 / Math.PI) * Math.asin(y / mag);
+    //当角度位于第二或第三象限
+    if (x < 0) {
+        dir += 180;
+    } else if (x > 0 && y < 0) {
+        dir += 360;
+    }
+    return new Polar(mag, dir);
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>3D中的笛卡儿坐标(分量)</h2>
+					<p>&nbsp;</p>
+					<p style="text-align: left;text-indent: 50px;">向量 `\vec {B} = b_1\hat i + b_2\hat j+ b_3\hat k`，其中，`\hat i`、`\hat j`和`\hat k`分别为x、y和z方向上的单位向量</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>向量加法与减法</h2>
+					<p><img src="img/xljia.png"></p>
+					<p style="font-size: 22px;">`\vec {A} + \vec {B} = (a_1+b_1)\hat i + (a_2+b_2)\hat j`</p>
+					<p style="text-align: left;font-size: 22px;">，其中`\vec {A} = a_1\hat i + a_2\hat j`，`\vec {B} = b_1\hat i + b_2\hat j`</p>					
+					<p style="font-size: 22px;">`\vec {A} + \vec {B} = (a_1+b_1)\hat i + (a_2+b_2)\hat j + (a_3+b_3)\hat k`</p>
+					<p style="text-align: left;font-size: 22px;">，其中`\vec {A} = a_1\hat i + a_2\hat j +  a_3\hat k`，`\vec {B} = b_1\hat i + b_2\hat j +  b_3\hat k`</p>	
+					<p style="font-size: 22px;">`A + B = B + A`</p>
+					<p style="font-size: 22px;">`║A + B║ \ne ║B║ + ║A║`</p>
+					<aside class="notes">
+						向量相减等于加上第二个向量的负向量。
+					</aside>
+				</section>
+
+				<section>
+					<h2>标量和向量相乘</h2>
+					<p>&nbsp;</p>
+					<p>
+						`c vec {A} = c║A║  ©  θ`
+					</p>
+					<p>
+					</p>
+					<p>
+						`c \vec {A} = ca_1\hat i + ca_2\hat j`
+					</p>
+					<aside class="notes">
+					对于采用极坐标形式的向量，它只包含两个部分——模和方向，当用向量与之相乘时，只需把标量和模相乘即可，方向不用改变。对于采用笛卡儿坐标形式的向量，那么只需将标量乘以每个分量即可。
+					</aside>
+				</section>
+
+				<section>
+					<h2>向量的单位化</h2>
+					<p>&nbsp;</p>
+					<p>
+						`\hat A = 1/(║A║) A = [a_1/(║A║) &nbsp;&nbsp;&nbsp;  a_2/(║A║)]`
+					</p>
+					<p>
+						`\hat A = 1/(║A║) A = [a_1/(║A║) &nbsp;&nbsp;&nbsp; a_2/(║A║) &nbsp;&nbsp;&nbsp;  a_3/(║A║)]`
+					</p>
+					<aside class="notes">
+					单位化就是将向量的模缩放到1 的过程。
+					对于极坐标形式的向量，单位化只需将其模改成1，而方向保持不变即可。
+					对于笛卡儿坐标形式的向量，首先计算向量的模，然后将每个分量除以该数值即可。
+					</aside>
+				</section>
+
+				<section>
+					<h2>向量的点乘</h2>
+					<p>
+					`A \cdot B = a_1b_1 + a_2b_2`,
+					</p>
+					<p  style="text-align: left;font-size: 24px">其中，向量`A=[a_1  &nbsp;&nbsp;&nbsp; a_2]`，向量`B=[b_1  &nbsp;&nbsp;&nbsp; b_2]`</p>
+					<p>
+					`A \cdot B = a_1b_1 + a_2b_2 + a_3b_3`,
+					</p>
+					<p  style="text-align: left;font-size: 24px">其中，向量`A=[a_1  &nbsp;&nbsp;&nbsp; a_2 &nbsp;&nbsp;&nbsp; a_3]`，向量`B=[b_1  &nbsp;&nbsp;&nbsp; b_2 &nbsp;&nbsp;&nbsp; b_3]`</p>
+					<p style="text-align:left;font-size: 24px">点乘可以获得两向量之间角度的信息。</p>
+					<p style="text-align:left;font-size: 24px">
+					<p style="font-size: 24px">	① 如果A·B < 0，那么θ> 90°；
+					<p style="font-size: 24px">	② 如果A·B = 0，那么θ= 90°；
+					<p style="font-size: 24px">	③ 如果A·B > 0，那么θ< 90°。					</p>
+					<p  style="text-align: left;font-size: 24px">其中θ是A 和B 的夹角。</p>
+					<aside class="notes">
+					向量的点乘运算就是将对应的x 分量相乘，然后加上对应的y分量的乘积。两个向量的点乘结果是一个标量。向量的点乘也叫做向量的数量积，这是因为向量的点乘运算返回的是一个数值。实际运用，检测物体是否可见。
+					假设在游戏中，摄像机的位置是(1,4)，向量C=[5 3]表示摄像机的视线。现在物体位于
+					(7,2)处，且摄像机只能看到一个方向上90°范围的物体，问该物体是否可见？
+					解：① 构造摄像机和物体间的向量，A = [7-1 2-4] = [6 -2]
+					② 计算夹角：A·C = 6 * 5 + (-2) * 3 = 24 > 0 说明夹角小于90°。
+					因此该物体可视。
+					</aside>
+				</section>
+
+				<section>
+					<h2>两向量之间的夹角</h2>
+					<p>&nbsp;</p>
+					<p>
+						`A·B = ║A║ ║B║ cosθ`
+					</p>
+					<p>θ为两向量A与B之间的夹角</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>向量叉乘</h2>
+					<p>&nbsp;</p>
+					<p>`A \times B = [(a_2b_3 - a_3_b_2) (a_3b_1 - a_1b_3) (a_1_b_2 - a_2b_1)]`</p>
+					<p style="text-align: left;">
+					 叉乘只适用于3D 向量，返回的是一个向量，因此又称为向量积
+					</p>
+					<p>
+						<img src="img/chacheng.png" />
+					</p>
+					<aside class="notes">
+					叉乘得到的结果向量分别垂直于两个原始向量，也正是这个原因，它仅适用于3D 向量。
+					</aside>
+				</section>
+
+				<section>
+					<h2>3D 向量间的夹角</h2>
+					<p>&nbsp;</p>
+					<p>
+						`║A \times B║ = ║A║║B║sinθ`
+					</p>
+					<p>其中，A、B为任意的3D向量，θ为他们之间的夹角</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>叉乘不满足交换率</h2>
+					<p>&nbsp;</p>
+					<p>
+						`A \times B \ne B \times A`，但`A \times B = -(B \times A)`
+					</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>平面的法线</h2>
+					<p>&nbsp;</p>
+					<p>
+						平面法线 = `(A \hat \times B) = (A \times B) / (║A \times B║)`
+					</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵运算</h2>
+                    <ul>
+                        <li>矩阵的定义</li>
+                        <li>矩阵的加减运算</li>
+                        <li>矩阵与标量相乘</li>
+                        <li>矩阵相乘</li>
+                        <li>矩阵转置</li>
+                        <li>矩阵变换</li>
+                        <li>组合变换</li>
+                    </ul>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵的定义</h2>
+					<p style="font-size: 30px;">$$ A = \left[\begin{matrix} a_{11} & ... & a_{1j} & & a_{1N} \\ ... & & & & ... \\ a_{i1} & & a_{ij} & & a_{iN} \\  ... & & & & ... \\  a_{M1} & ... & a_{Mj} & & a_{MN} \\ \end{matrix}\right]$$</p>
+					<p style="text-align: left;font-size: 28px;">
+					矩阵的维数：设矩阵有n 行m 列，那么矩阵的维数是n×m；
+					</p>
+					<p style="text-align: left;font-size: 28px;">
+					相等矩阵：<br/>对于两个具有相同维数的矩阵，我们把同行同列的两个元素称为对应元素。<br/>两矩阵相等的充要条件是：它们具有相同的维数，并且所有的对应元素都相同。
+					</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+
+				<section>
+					<h2>矩阵的定义</h2>
+					<p>&nbsp;</p>
+					<p>
+					<table>
+						<tr>
+							<td>零矩阵(0)</td>
+							<td>单位矩阵(E)</td>
+							<td>对角矩阵</td>
+						</tr>
+						<tr>
+							<td>$$\left[\begin{matrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \\ \end{matrix}\right]$$</td>
+							<td>$$\left[\begin{matrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ \end{matrix}\right]$$</td>
+							<td>$$\left[\begin{matrix} 5 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 8 \\ \end{matrix}\right]$$</td>
+						</tr>
+					</table>
+					</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵的加减运算</h2>
+					<p><img src="img/martixjia.png"/></p>
+					<p style="font-size: 26px;">
+					$$ A + B =  \left[\begin{matrix} 1 & 3 & 5 \\ 4 & 1 & 3 \\ 2 & 1 & 2 \\ \end{matrix}\right]  +  \left[\begin{matrix} 4 & 3 & 2 \\ 1 & 3 & 5 \\ 6 & 5 & 9 \\ \end{matrix}\right] = \left[\begin{matrix} 5 & 6 & 8 \\ 5 & 4 & 8 \\ ? & ? & ? \\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+					矩阵的加减运算要求两个矩阵具有相同的维数，因此只需在对应元素上进行加减运算即可
+					</aside>
+				</section>
+				<section>
+					<h2>矩阵的加法满足下列运算律</h2>
+					<p>&nbsp;</p>
+					<p style="font-size: 26px;">
+						<ul>
+							<li>交换律： A+B=B+A</li>
+							<li>结合律： A+(B+C)=(A+B)+C</li>
+							<li>存在零元： A+0=0+A=A</li>
+							<li>存在负元： A+(-A)=(-A)+A=0</li>
+						</ul>
+					</p>
+					<aside class="notes">
+					矩阵的加减运算要求两个矩阵具有相同的维数，因此只需在对应元素上进行加减运算即可
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵与标量相乘</h2>
+					<p><img src="img/martixscalar.png"/></p>
+					<p style="text-align: left;text-indent: 50px;">
+					$$ cA = 3 \times \left[\begin{matrix} 1 & 3 & 2 \\ 2 & 4 & 6 \\ 5 & 2 & 2 \\ \end{matrix}\right] = \left[\begin{matrix} 3 & 9 & 6 \\ ? & ? & ? \\ ? & ? & ? \\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+					矩阵与标量相乘，等于标量乘以矩阵中的每个元素。
+					</aside>
+				</section>
+				<section>
+					<h2>数与矩阵的乘法满足下列运算律</h2>
+					<p>&nbsp;</p>
+					<p style="font-size: 26px;">
+						<ul>
+							<li>1A = A</li>
+							<li>`\lambda(A+B) = \lambda A + \lambda B`</li>
+							<li>`(\lambda + \mu)A = \lambda A + \mu A`</li>
+							<li>`(\lambda \mu)A = \lambda(\mu A) = \mu(\lambda A)`</li>
+						</ul>
+					</p>
+					<aside class="notes">
+					矩阵的加减运算要求两个矩阵具有相同的维数，因此只需在对应元素上进行加减运算即可
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵相乘</h2>
+					<p><img src="img/martixmul.png"/></p>
+					<p style="text-align: left;text-indent: 50px;">
+					$$ A \times B = \left[\begin{matrix} 1 & 3 & 2 \\ 2 & 4 & 6 \\ \end{matrix}\right] \times \left[\begin{matrix} 3 & 1 \\ 1 & 2  \\ 7 & 4 \\ \end{matrix}\right] = \left[\begin{matrix} 20 & 15 \\ ? & ? \\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+					1)矩阵相乘要有意义，必须满足A 的列数等于B 的行数。<br/>
+					2)如果矩阵相乘有意义，那么A×B 的行数等于A 的行数，列数等于B 的列数。<br/>
+					*矩阵相乘不满足交换律，即A×B≠B×A<br/>
+					记法：A 每行的每个元素乘以B 每列的对应元素的结果的和，结果放在A 元素对应的位置
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵相乘满足下列运算律</h2>
+					<p>&nbsp;</p>
+					<p style="font-size: 26px;">
+						<ul>
+	                        <li>结合性 (AB)C=A(BC)</li>
+	                        <li>左分配性 A(B+C)=AB+AC</li>
+	                        <li>右分配性 (A+B)C=AC+BC</li>
+							<li>数与矩阵乘法的结合律： `(\lambda A)B = \lambda(AB) = A(\lambda B)`</li>
+						</ul>
+					</p>
+					<aside class="notes">
+					矩阵的加减运算要求两个矩阵具有相同的维数，因此只需在对应元素上进行加减运算即可
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵转置</h2>
+					<p><img  style="height:200px;" src="img/martixt.png"/></p>
+					<p style="text-align: left;">
+					对于任意大小的矩阵 A 的转置矩阵表示为 `A^T`。
+					对于任意大小的矩阵，元素`a_(mn)` 在矩阵AT 中变为 `a_(nm)`
+					</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵的转置运算满足下列运算律</h2>
+					<p>&nbsp;</p>
+					<p style="font-size: 26px;">
+						<ul>
+	                        <li>`(A^T)^T = A`</li>
+	                        <li>`(A + B)^T = A^T + B^T`</li>
+	                        <li>`(\lambda A)^T = \lambda A^T`</li>
+							<li>`(AB)^T = B^TA^T`</li>
+						</ul>
+					</p>
+					<aside class="notes">
+					矩阵的加减运算要求两个矩阵具有相同的维数，因此只需在对应元素上进行加减运算即可
+					</aside>
+				</section>
+
+				<section>
+					<h2>对称矩阵</h2>
+					<p>&nbsp;</p>
+					<p style="text-align: left;">
+					 `n` 阶方阵 若满足条件：`A^T=A`  ，则称 `A` 为对称矩阵；若满足条件：`A^T=-A`  ，则称 `A` 为反对称矩阵。
+					</p>
+					<p style="text-align: left;">
+					 对称矩阵具有如下性质:
+					</p>
+					<p>
+						<ol  style="font-size: 30px">
+							<li>对于任意 `m \times n` 矩阵 `A` ， `A^TA`为 `n` 阶对称矩阵；而 `A A^T` 为 `m` 阶对称矩阵</li>
+							<li>两个同阶（反）对称矩阵的和，仍为（反）对称矩阵；</li>
+							<li>如果两个同阶（反）对称矩阵 `A,B` 可交换，即 AB=BA，则它们的乘积 `AB` 必为对称矩阵，即 `(AB)^T = AB` </li>
+						</ol>
+					</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>可逆矩阵</h2>
+					<p style="font-size: 24px">&nbsp;</p>
+					<p style="text-align: left;font-size: 26px">
+					 设`A ∈Mn（F）`, 若存在同阶矩阵`B` ，使`AB=BA=E`，则称A 为可逆矩阵,`B` 为`A`的逆矩阵，简称为` A` 的逆，记为   `B= A^-1`。
+					</p>
+					<p style="text-align: left;font-size: 26px">
+					 如果`A`是可逆矩阵，那么`A`的逆是唯一的。这是因为当`B ，C`都是`A`的逆时，有`AB=BA=E=AC=CA`, `B=BE=B(AC)=(BA)C=EC=C`。
+					</p>
+					<p style="text-align: left;font-size: 26px">
+					 对称矩阵具有如下性质:
+					</p>
+					<p>
+						<ol  style="font-size: 24px">
+							<li> `(A^-1)^-1 =A`</li>
+							<li>如果 `A` 可逆，数`\lambda ≠ 0` ，那么` (\lambda A)^-1= 1/\lambda A^-1`</li>
+							<li>如果 `A` 可逆，那么,`A^T`也可逆，而且 ( A^T)-1=(A^-1)^T</li>
+							<li> 如果`A ，B` 皆可逆，那么 AB 也可逆，且(AB)^-1=B^-1A^-1 </li>
+						</ol>
+					</p>
+					<p style="font-size: 24px">两个`n`阶矩阵A与B的乘积`AB=E`时，一定有`BA=E`，从而`A，B`互为逆矩阵</p>
+					<aside class="notes">
+						Mn(F)表示数域F上一切n阶矩阵所组成的向量。
+						两个n阶矩阵A与B的乘积AB=E 时，一定有BA=E ，从而A ，B 互为逆矩阵。
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵变换</h2>
+                    <ul>
+                        <li>平移变换</li>
+                        <li>缩放变换</li>
+                        <li>错切变换</li>
+                        <li>旋转变换</li>
+                        <li>组合变换</li>
+                    </ul>
+					<aside class="notes">
+					1)矩阵在游戏编程中的具体应用：仿射变换。<br/>
+					2)变换是指在空间中能让物体发生运动的操作的总称，包括前后、上下、左右移动，缩小放大、旋转等。<br/>
+					3)仿射是指物体在变换之后应该保持先前的形状。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维平移</h2>
+					<p style="float: right"><img src="img/martixtrans.png" /></p>
+					<p style="text-align: left;font-size: 26px">
+					矩阵加法
+					</p>
+					<p style="font-size: 24px">
+						$$ \left[\begin{matrix} x' \\ y'\\ \end{matrix}\right] = \left[\begin{matrix} x \\ y\\ \end{matrix}\right] + \left[\begin{matrix} d_x \\ d_y\\ \end{matrix}\right] = \left[\begin{matrix} x+d_x \\ y+d_y\\ \end{matrix}\right]$$
+					</p>
+					<p style="text-align: left;font-size: 26px">
+					矩阵乘法
+					</p>
+					<p style="font-size: 24px">
+						$$ \left[\begin{matrix} x' \\ y'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} 1 & 0 & d_x \\ 0 & 1 & d_y \\ 0 & 0 & 1 \end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} x+d_x \\ y+d_y\\ 1\\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+					1)物体的平移运动既可以由矩阵的加法来完成，也可以利用矩阵的乘法来实现。<br/>
+					2)如果对物体进行的仅是平移变换，那么采用矩阵加法效率更高。<br/>
+					3)如果还要对物体进行缩放和旋转变换，那么应该用矩阵乘法来实现。<br/>
+					注意：当对矩阵进行加法运算时仅仅是将对应元素相加，因此参加运算的两个矩阵的结构必须相同。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维缩放</h2>
+					<p><img src="img/martixscale.png" /></p>
+					<p style="font-size: 26px;">
+						$$ \left[\begin{matrix} x' \\ y'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} S_x & 0 & 0 \\ 0 & S_y & 0 \\ 0 & 0 & 1 \end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} S_x \times x \\ S_y \times y\\ 1\\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+						我们可以使用矩阵乘法对一个物体进行缩放。如果对物体的所有顶点进行了缩放，那么变换的结果便是缩放了整个物体。<br/>
+						其中，Sx 为x 方向上的缩放因子，Sy 是y 方向上的缩放因子。<br/>
+						如果要进行均匀缩放的话，即保持物体原先的形状，那么就要保证Sx = Sy。<br/>
+						当为缩放因子Sx、Sy 赋值时，如果取值位于0 和1 之间，那么变换的结果将缩小物体；<br/>
+						反之，如果大于1，那么变换将扩大物体。<br/>
+						如果缩放因子为负值时，那么变换会使物体产生镜像效果。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维对称</h2>
+					<table style="font-size: 22px;">
+						<tbody>
+							<tr>
+								<td>
+									<p style="font-size: 26px;color:yellow">以y轴为对称线的对称变换</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-20px;width:157px;height:121px;" src="img/martixmirror.png" /></p>
+									<p style="float: left;display:inline-block">
+										$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = \left[\begin{matrix} -1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} -x \\ y\\ 1\\ \end{matrix}\right] $$
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<td>									
+									<p  style="font-size: 26px;color:yellow">以x轴为对称线的对称变换</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-16px" src="img/martixmirror1.png" /></p>
+									<p style="float: left;display:inline-block">
+										$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = \left[\begin{matrix} 1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} x \\ -y\\ 1\\ \end{matrix}\right] $$
+									</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<aside class="notes">
+						1、以y轴为对称线的对称变换。变换后，图形点集的x坐标值不变，但符号相反；y坐标值不变。<br/>
+						2、以x轴为对称线的对称变换。变换后，变换后，图形点集的x和y坐标对调，但符号相反。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维对称</h2>
+					<table style="font-size: 22px;">
+						<tbody>
+							<tr>
+								<td>
+									<p  style="font-size: 26px;color:yellow">以原点为对称的对称变换</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-20px;width:157px;height:121px;" src="img/martixmirror2.png" /></p>
+									<p style="float: left;display:inline-block">
+										$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = \left[\begin{matrix} -1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} -x \\ -y\\ 1\\ \end{matrix}\right] $$
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<td>									
+									<p  style="font-size: 26px;color:yellow">以直线y=x为对称线的对称变换</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-16px;width:157px;height:121px;" src="img/martixmirror3.png" /></p>
+									<p style="float: left;display:inline-block">
+										$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = \left[\begin{matrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} y \\ x\\ 1\\ \end{matrix}\right] $$
+									</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<aside class="notes">
+						1、以原点为对称的对称变换。变换后，图形点集的x和y坐标值不变，但符号相反。<br/>
+						2、以直线y=x为对称线的对称变换。变换后，图形点集的x和y坐标对调。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维对称</h2>
+					<table style="font-size: 22px;">
+						<tbody>
+							<tr>
+								<td>									
+									<p  style="font-size: 26px;color:yellow">以直线y=-x为对称线的对称变换</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-16px;width:157px;height:121px;" src="img/martixmirror3.png" /></p>
+									<p style="float: left;display:inline-block">
+										$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = \left[\begin{matrix} 0 & -1 & 0 \\ -1 & 0 & 0 \\ 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} -y \\ -x\\ 1\\ \end{matrix}\right] $$
+									</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<aside class="notes">
+						以直线y=-x为对称线的对称变换。变换后，图形点集的x和y坐标对调,但符号相反。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维错切</h2>
+					<table style="font-size: 22px;">
+						<tbody>
+							<tr>
+								<td>
+									<p style="font-size: 26px;color:yellow">沿x方向的错切</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-20px;width:157px;height:121px;" src="img/martixskew1.png" /></p>
+									<p style="float: left;display:inline-block">
+										$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = \left[\begin{matrix} 1 & c & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} x + cy \\ y\\ 1\\ \end{matrix}\right] $$
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<td>									
+									<p style="font-size: 26px;color:yellow">沿y方向的错切</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-16px;width:157px;height:121px;" src="img/martixskew2.png" /></p>
+									<p style="float: left;display:inline-block">
+										$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = \left[\begin{matrix} 1 & 0 & 0 \\ c & 1 & 0 \\ 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} x \\ y+cx\\ 1\\ \end{matrix}\right] $$
+									</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<aside class="notes">
+						二维错切变换：是一种会使物体形状发生变化的变换。常用的错切变换有两种：改变x坐标值和改变y坐标值。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维旋转</h2>
+					<p><img src="img/martixroate.png" /></p>
+					<p style="font-size: 26px;">
+						$$ \left[\begin{matrix} x' \\ y'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} cosθ & -sinθ & 0 \\ sinθ & cosθ & 0 \\ 0 & 0 & 1 \end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} xcosθ- ysinθ \\ xsinθ+ ycosθ\\ 1\\ \end{matrix}\right] $$
+					</p>
+					<aside class="notes">
+						利用矩阵相乘可以对一个物体进行旋转变换。<br/>
+						正的旋转角度意味着沿逆时针方向进行旋转，而负的旋转角度意味着沿顺时针方向进行旋转。<br/>
+						3D 空间中的旋转问题涉及到三个平面，分别是xy、xz、yz。<br/>
+						其中，xy 平面就是计算机屏幕所在的2D 平面。<br/>
+						因此，在3D 空间的旋转就有3 种情况，绕x 轴、绕y 轴、绕z 轴。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2 style="font-size: 42px">二维复合变换</h2>
+					<p style="font-size: 22px;">绕任意点（或称基准点）（xr,yr）的旋转</p>	
+					<p><img  src="img/trans2_1.png" /></p>
+					<table>
+						<tr>
+							<td><img  style="width:157px;height:121px"  src="img/trans2_2.png" /></td>
+							<td style="vertical-align: middle">=></td>
+							<td><img  style="width:157px;height:121px"  src="img/trans2_3.png" /></td>
+							<td style="vertical-align: middle">=></td>
+							<td><img  style="width:157px;height:121px"  src="img/trans2_4.png" /></td>
+						</tr>
+					</table>
+					<aside class="notes">
+						　二维复合变换：前面所讨论的图形变换是相对于坐标原点或坐标轴来进行的。在实际中，常常需要相对于任意点或任意轴来进行变换。为了做到这一点，可通过计算多个基本变换矩阵的乘积来得到总的变换矩阵或称为复合变换矩阵，从而实现任意顺序的组合变换。<br/>
+						（1）平移物体使基准点位置被移到坐标原点；<br/><br/>
+						（2）绕坐标原点旋转；<br/>
+						（3）平移物体使基准点回到原始位置。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维复合变换</h2>
+					<p>&nbsp;</p>
+					<p style="font-size: 24px;">
+						<span class="fragment" style="float: left">$$\left[\begin{matrix} x' \\ y'\\ 1\\ \end{matrix}\right] =$$</span><span class="fragment" style="float:right">$$ \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right]$$ </span><span class="fragment" style="float:right">$$\left[\begin{matrix} 1 & 0 & -x_r \\ 0 & 1 & -y_r \\ 0 & 0 & 1 \end{matrix}\right] \times $$</span><span class="fragment" style="float:right">$$\left[\begin{matrix} cosθ & -sinθ & 0 \\ sinθ & cosθ & 0 \\ 0 & 0 & 1 \end{matrix}\right] \times$$</span><span class="fragment" style="float:right">$$\left[\begin{matrix} 1 & 0 & x_r \\ 0 & 1 & y_r \\ 0 & 0 & 1 \end{matrix}\right] \times$$</span><span class="fragment">$$ = \left[\begin{matrix} xcosθ & - ysinθ & ( 1-cosθ)x_r+y_rsinθ\\ sinθ& cosθ& (1-cosθ)y_r-x_rsinθ\\ 0 & 0 & 1\end{matrix}\right] $$</span>
+					<!-- 	<span style="float:left">$$ \left[\begin{matrix} x' \\ y'\\ 1\\ \end{matrix}\right] =$$</span><span class="fragment" style="float:left">$$\left[\begin{matrix} 1 & 0 & x_r \\ 0 & 1 & y_r \\ 0 & 0 & 1 \end{matrix}\right] \times $$</span> <span class="fragment" style="float:left">$$\left[\begin{matrix} cosθ & -sinθ & 0 \\ sinθ & cosθ & 0 \\ 0 & 0 & 1 \end{matrix}\right] \times $$</span> <span class="fragment" style="float:left">$$\left[\begin{matrix} 1 & 0 & -x_r \\ 0 & 1 & -y_r \\ 0 & 0 & 1 \end{matrix}\right] \times $$</span> <span class="fragment" style="float:left">$$ \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$ </span> <span>$$ = \left[\begin{matrix} xcosθ & - ysinθ & ( 1-cosθ)x_r+y_rsinθ\\ sinθ& cosθ& (1-cosθ)y_r-x_rsinθ\\ 0 & 0 & 1\end{matrix}\right] $$</span> -->
+					</p>
+					<aside class="notes">
+					绕任意点的旋转
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维平移</h2>
+					<p style="text-align: left;font-size: 26px">
+					矩阵加法
+					</p>
+					<p style="font-size: 24px">
+						$$ \left[\begin{matrix} x' \\ y'\\ z' \\ \end{matrix}\right] = \left[\begin{matrix} x \\ y\\ z\\ \end{matrix}\right] + \left[\begin{matrix} d_x \\ d_y\\ d_z\\ \end{matrix}\right] = \left[\begin{matrix} x+d_x \\ y+d_y\\ z+d_z\\ \end{matrix}\right]$$
+					</p>
+					<p style="text-align: left;font-size: 26px">
+					矩阵乘法
+					</p>
+					<p style="font-size: 24px;font-size: 24px">
+						$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} 1 & 0 & 0 & d_x \\ 0 & 1 & 0 & d_y \\ 0 & 0 & 1 & d_z \\ 0 & 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} x+d_x \\ y+d_y\\ z+d_z\\ 1\\ \end{matrix}\right] $$
+					</p>
+					<aside class="notes">
+					1)物体的平移运动既可以由矩阵的加法来完成，也可以利用矩阵的乘法来实现。<br/>
+					2)如果对物体进行的仅是平移变换，那么采用矩阵加法效率更高。<br/>
+					3)如果还要对物体进行缩放和旋转变换，那么应该用矩阵乘法来实现。<br/>
+					注意：当对矩阵进行加法运算时仅仅是将对应元素相加，因此参加运算的两个矩阵的结构必须相同。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维缩放</h2>
+					<p>&nbsp;</p>
+					<p>
+						$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} S_x & 0 & 0 & 0 \\ 0 & S_y& 0 & 0 \\ 0 & 0 & S_z & 0 \\ 0 & 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} S_x \times x \\ S_y \times y\\ S_z \times z\\ 1\\ \end{matrix}\right] $$
+					</p>
+
+					<aside class="notes">
+						我们可以使用矩阵乘法对一个物体进行缩放。如果对物体的所有顶点进行了缩放，那么变换的结果便是缩放了整个物体。<br/>
+						其中，Sx 为x 方向上的缩放因子，Sy 是y 方向上的缩放因子。<br/>
+						如果要进行均匀缩放的话，即保持物体原先的形状，那么就要保证Sx = Sy。<br/>
+						当为缩放因子Sx、Sy 赋值时，如果取值位于0 和1 之间，那么变换的结果将缩小物体；<br/>
+						反之，如果大于1，那么变换将扩大物体。<br/>
+						如果缩放因子为负值时，那么变换会使物体产生镜像效果。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维旋转</h2>
+					<p>&nbsp;</p>
+					<p style="text-align: left;">
+					绕 z轴
+					</p>
+					<p style="font-size: 24px">
+						$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} cosθ & -sinθ & 0 & 0 \\ sinθ & cosθ& 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} xcosθ-ysinθ\\ xsinθ+ycosθ\\ z\\ 1\\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+						Z 轴的正方向由屏幕指向外面，因此绕z 轴选择其实就是在屏幕空间旋转，和2D 旋转一样。Z 轴旋转经常用来模拟飞机的横向滚动。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维旋转</h2>
+					<p>&nbsp;</p>
+					<p style="text-align: left;">
+					绕 x轴
+					</p>
+					<p style="font-size: 24px">
+						$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} 1 & 0 & 0 & 0 \\0 &cosθ & -sinθ & 0 \\ 0 & sinθ & cosθ& 0 \\  0 & 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} x \\ ycosθ-zsinθ\\ ysinθ+zcosθ\\ 1\\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+						在模拟飞行领域中，绕x 轴选择可以看作是飞机的前倾和后仰。绕x 轴旋转时，x 坐标值是不会改变的。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维旋转</h2>
+					<p>&nbsp;</p>
+					<p style="text-align: left;">
+					绕 y轴
+					</p>
+					<p style="font-size: 24px">
+						$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} cosθ & 0  & sinθ & 0 \\ 0 & 1 & 0 & 0 \\-sinθ & 0 & cosθ & 0  \\  0 & 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+						在模拟飞行中，y 轴旋转可以看做是左右偏航。
+					</aside>
+				</section>
+
+
+				<section>
+					<h2>三维复合变换</h2>
+					<p>&nbsp;</p>
+					<p style="font-size: 24px">
+						$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} a & d  & g & l \\ b & e & h & m \\c & f & i & n  \\  p & q & r & s\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right]$$
+					</p>
+					<p class="fragment"><img height="254px" src="img/transform3d.jpg"/></p>
+					<aside class="notes">
+						
+					</aside>
+				</section>
+
+				<section>
+					<h2>示例</h2>
+					<p style="text-align: left;font-size: 24px;">
+					要对一个三角形（中心<75，93>）以中心旋转左转90°，那么一共需要执行如下几步：<br/>
+					① 将三角形的中心移动到原点，即x 轴左移75 个单位，y 轴移动93 个单位。<br/>
+					② 对三角形进行旋转。<br/>
+					③ 将中心点移回<75，93>处。
+					</p>
+					<p  class="fragment"  style="font-size: 24px">
+						$$ \left[\begin{matrix} x'\\ y'\\ 1\\ \end{matrix}\right] =  \left[\begin{matrix} 1 & 0 & 75 \\ 0 & 1 & 93 \\ 0 & 0 & 1 \end{matrix}\right] \left[\begin{matrix} cos90^\circ & -sin90^\circ & 0 \\sin90^\circ & cos90^\circ& 0 \\  0 & 0 & 1\end{matrix}\right] \left[\begin{matrix} 1 & 0 & -75 \\ 0 & 1 & -93 \\ 0 & 0 & 1 \end{matrix}\right] \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$ $$ = \left[\begin{matrix} 0 & -1 & 168 \\ 1 & 0 & 18 \\ 0 & 0 & 1 \end{matrix}\right] \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$
+					</p>
+					<aside class="notes">
+						上述提到的变换可以整合到一起，这样可以使程序在执行时更加快速，当然，这会增加编程时的难度。
+					</aside>
+				</section>
+
+				<!-- <section>
+					<h2>组合变换</h2>
+					<p style="text-align: left;font-size: 24px;">
+					要对一个三角形（中心<75，93>）以中心旋转左转90°，那么一共需要执行如下几步：<br/>
+					① 将三角形的中心移动到原点，即x 轴左移75 个单位，y 轴移动93 个单位。<br/>
+					② 对三角形进行旋转。<br/>
+					③ 将中心点移回<75，93>处。
+					</p>
+					<p style="font-size: 24px">
+						$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} cosθ & sinθ & 0 & 0 \\ 0 & 1 & 0 & 0 \\-sinθ & cosθ& 0 & 0 \\  0 & 0 & 0 & 1\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+						上述提到的变换可以整合到一起，这样可以使程序在执行时更加快速，当然，这会增加编程时的难度。
+					</aside>
+				</section> -->
+
+				<!-- <section>
+					<h2>矩阵的定义</h2>
+					<p>&nbsp;</p>
+					<p style="text-align: left;text-indent: 50px;">
+					$$ A = \begin{matrix} 1 & x & x^2 \\ 1 & y & y^2 \\ 1 & z & z^2 \\ \end{matrix} $$
+					</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<section>
+						<h2>Fragment Styles</h2>
+						<p>There's different types of fragments, like:</p>
+						<p class="fragment grow">grow</p>
+						<p class="fragment shrink">shrink</p>
+						<p class="fragment fade-out">fade-out</p>
+						<p class="fragment current-visible">current-visible</p>
+						<p class="fragment highlight-red">highlight-red</p>
+						<p class="fragment highlight-blue">highlight-blue</p>
+					</section>
+				</section>
+
+				<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+					<h2>Background Transitions</h2>
+					<p>
+						Different background transitions are available via the backgroundTransition option. This one's called "zoom".
+					</p>
+					<pre><code>Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
+				</section>
+
+				<section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
+					<h2>Background Transitions</h2>
+					<p>
+						You can override background transitions per-slide.
+					</p>
+					<pre><code style="word-wrap: break-word;">&lt;section data-background-transition="zoom"&gt;</code></pre>
+				</section> -->
+
+				<section style="text-align: left;">
+					<h1>THE END</h1>
+					<p>
+						- <a href="https://github.com/bigwhiteshark">https://github.com/bigwhiteshark</a>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				math: {
+			        mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+			        //config: 'AM_HTMLorMML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+			        config: 'TeX-MML-AM_HTMLorMML'  // See http://docs.mathjax.org/en/latest/config-files.html
+			    },
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/math/math.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

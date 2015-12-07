@@ -120,15 +120,23 @@ p.drawLine = function(x, y, dx, dy) {
     context.stroke();
 }
 
-p.drawRect = function(x, y, width, height,strokeColor) {
+
+p.drawRect = function(x, y, width, height) {
+    var ctx = this.context;
+    ctx.beginPath();
+    ctx.fillRect(x - width / 2, y - height / 2, width, height);
+    ctx.stroke();
+}
+
+p.drawArc = function(x, y, width, height,strokeColor) {
     var ctx = this.context;
     ctx.beginPath();
     ctx.strokeStyle  = strokeColor;
-    ctx.lineWidth = 5;
+    ctx.lineWidth = 1;
     ctx.strokeRect(x - width / 2, y - height / 2, width, height);
-    ctx.fillStyle = "red";
-    ctx.fillText("p("+x+","+y+")",x-width/4,y+10);
+   /* ctx.fillStyle = "red";
+    ctx.fillText("p("+x+","+y+")",x-width/4,y+10);*/
     ctx.fillStyle = "blue";
-    ctx.arc(x,y,5,0,2*Math.PI);
+    ctx.arc(x,y,1,0,2*Math.PI);
     ctx.fill();
 }

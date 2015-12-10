@@ -54,7 +54,6 @@ define(function(require) {
         this.y = x * sin + y * cos;
 
         return this;
-
     }
 
     p.scale = function(scale){

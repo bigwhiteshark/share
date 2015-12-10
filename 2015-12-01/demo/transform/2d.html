@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)http://jun-lu.github.io/jun/canvas_sin_cos_tan.html -->
+<html lang="zh"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>二维变换</title>
+
+	 <script src="../Coordinate.js"></script>
+	 <script src="../libs/dat.gui.min.js"></script>
+	 <script src="../libs/gl-matrix-min.js"></script>
+</head>
+<body>
+	<h1>二维矩阵变换</h1>
+	<canvas id="tutorial" width="1000" height="500">非常抱歉您的浏览器不支持 canvas</canvas>	
+	<script>
+		function init() {
+			var canvas = document.getElementById('tutorial');
+
+			var pc = new PlaneCoordinate(canvas);
+
+			pc.setProportion(0.02);
+			pc.setCalibration(50);
+			pc.init();
+			pc.draw();
+
+			function Triangle(p1,p2,p3) {
+				this.p1 = p1;
+				this.p2 = p2;
+				this.p3 = p3;
+
+				this.orignP1 = p1;
+				this.orignP2 = p2;
+				this.orignP3 = p3;
+			}
+
+			//y=sin(x)、y=cos(x)
+			var p = Triangle.prototype;
+			
+			p.reset = function(){
+				this.p1 = this.orignP1;
+				this.p2 = this.orignP2;
+				this.p3 = this.orignP3;
+			}
+
+			p.clone = function(){
+				this.p1 = this.orignP1;
+				this.p2 = this.orignP2;
+				this.p3 = this.orignP3;
+				this.draw();
+			}
+
+			p.getCenter = function(){
+				return {
+					x:(this.p1.x+this.p2.x+this.p3.x)/3,
+					y:(this.p1.y+this.p2.y+this.p3.y)/3
+				}
+			}
+
+			p.draw = function(strokeColor){
+				strokeColor = strokeColor ||'black';
+				 var p1 = pc.project(this.p1.x, this.p1.y);
+				 var p2 = pc.project(this.p2.x, this.p2.y);
+				 var p3 = pc.project(this.p3.x, this.p3.y);
+				 pc.drawLine(p1.x,p1.y,p2.x,p2.y,strokeColor);
+				 pc.drawLine(p2.x,p2.y,p3.x,p3.y,strokeColor);
+				 pc.drawLine(p3.x,p3.y,p1.x,p1.y,strokeColor);
+
+				 var center = this.getCenter();
+				 center = pc.project(center.x, center.y);
+				 pc.drawArc(center.x,center.y);
+
+			}
+			p.translate = function(tx,ty){
+				var trans_mat3 = []; 
+				mat3.copy(trans_mat3,[1,0,0,0,1,0,tx,ty,1]);//创建一个平移矩阵
+
+				var vp1 = vec3.fromValues(this.p1.x,this.p1.y,1);
+				var vp2 = vec3.fromValues(this.p2.x,this.p2.y,1); 
+				var vp3 = vec3.fromValues(this.p3.x,this.p3.y,1); 
+
+				var p1_dest_vec3 = [];
+				var p2_dest_vec3 = [];
+				var p3_dest_vec3 = [];				
+				vec3.transformMat3(p1_dest_vec3,vp1,trans_mat3);
+				vec3.transformMat3(p2_dest_vec3,vp2,trans_mat3);
+				vec3.transformMat3(p3_dest_vec3,vp3,trans_mat3);
+
+				this.p1 = {x:p1_dest_vec3[0],y:p1_dest_vec3[1]};
+				this.p2 = {x:p2_dest_vec3[0],y:p2_dest_vec3[1]};
+				this.p3 = {x:p3_dest_vec3[0],y:p3_dest_vec3[1]};
+
+				this.draw('red');
+			}
+			p.scale = function(sx,sy){
+				var trans_mat3 = [];
+				mat3.copy(trans_mat3,[sx,0,0,0,sy,0,0,0,1]); //创建一个缩放矩阵
+
+				var vp1 = vec3.fromValues(this.p1.x,this.p1.y,1);
+				var vp2 = vec3.fromValues(this.p2.x,this.p2.y,1); 
+				var vp3 = vec3.fromValues(this.p3.x,this.p3.y,1); 
+
+				/*var center = this.getCenter();
+				var trans_pintyi_mat3 = []; 
+				mat3.copy(trans_pintyi_mat3,[1,0,0,0,1,0,-center.x,-center.y,1]);//创建一个平移矩阵,平移到中心点
+
+				var temp_mat3 =[];
+				mat3.multiply(temp_mat3,trans_mat3,trans_pintyi_mat3); //先平移到中心点,再转旋转
+
+				var trans_pintyi2_mat3 = []; 
+				mat3.copy(trans_pintyi2_mat3,[1,0,0,0,1,0,center.x,center.y,1]);//创建一个平移矩阵
+				var temp2_mat3=[];
+				mat3.multiply(temp2_mat3,trans_pintyi2_mat3,temp_mat3);*/
+
+				var p1_dest_vec3 = [];
+				var p2_dest_vec3 = [];
+				var p3_dest_vec3 = [];				
+				vec3.transformMat3(p1_dest_vec3,vp1,trans_mat3);
+				vec3.transformMat3(p2_dest_vec3,vp2,trans_mat3);
+				vec3.transformMat3(p3_dest_vec3,vp3,trans_mat3);
+
+				this.p1 = {x:p1_dest_vec3[0],y:p1_dest_vec3[1]};
+				this.p2 = {x:p2_dest_vec3[0],y:p2_dest_vec3[1]};
+				this.p3 = {x:p3_dest_vec3[0],y:p3_dest_vec3[1]};
+
+				this.draw('red');
+			}
+			p.rotate = function(angle){
+				var rad = (angle / 180) * Math.PI;
+				var sin = Math.sin(rad);
+				var cos = Math.cos(rad);
+
+				var trans_mat3 = [];
+				mat3.copy(trans_mat3,[cos,sin,0,-sin,cos,0,0,0,1]); //创建一个旋转矩阵
+
+				var vp1 = vec3.fromValues(this.p1.x,this.p1.y,1);
+				var vp2 = vec3.fromValues(this.p2.x,this.p2.y,1); 
+				var vp3 = vec3.fromValues(this.p3.x,this.p3.y,1); 
+
+				/*var center = this.getCenter();
+				var trans_pintyi_mat3 = []; 
+				mat3.copy(trans_pintyi_mat3,[1,0,0,0,1,0,-center.x,-center.y,1]);//创建一个平移矩阵,平移到中心点
+
+				var temp_mat3 =[];
+				mat3.multiply(temp_mat3,trans_mat3,trans_pintyi_mat3); //先平移到中心点,再转旋转
+
+				var trans_pintyi2_mat3 = []; 
+				mat3.copy(trans_pintyi2_mat3,[1,0,0,0,1,0,center.x,center.y,1]);//创建一个平移矩阵
+				var temp2_mat3=[];
+				mat3.multiply(temp2_mat3,trans_pintyi2_mat3,temp_mat3);*/
+
+				var p1_dest_vec3 = [];
+				var p2_dest_vec3 = [];
+				var p3_dest_vec3 = [];				
+				vec3.transformMat3(p1_dest_vec3,vp1,trans_mat3);
+				vec3.transformMat3(p2_dest_vec3,vp2,trans_mat3);
+				vec3.transformMat3(p3_dest_vec3,vp3,trans_mat3);
+
+				this.p1 = {x:p1_dest_vec3[0],y:p1_dest_vec3[1]};
+				this.p2 = {x:p2_dest_vec3[0],y:p2_dest_vec3[1]};
+				this.p3 = {x:p3_dest_vec3[0],y:p3_dest_vec3[1]};
+
+				this.draw('red');
+			}
+
+			p.skewX = function(c){
+				var trans_mat3 = [];
+				mat3.copy(trans_mat3,[1,0,0,c,1,0,0,0,1]); //创建一个错切矩阵
+
+				var vp1 = vec3.fromValues(this.p1.x,this.p1.y,1);
+				var vp2 = vec3.fromValues(this.p2.x,this.p2.y,1); 
+				var vp3 = vec3.fromValues(this.p3.x,this.p3.y,1); 
+
+				var p1_dest_vec3 = [];
+				var p2_dest_vec3 = [];
+				var p3_dest_vec3 = [];				
+				vec3.transformMat3(p1_dest_vec3,vp1,trans_mat3);
+				vec3.transformMat3(p2_dest_vec3,vp2,trans_mat3);
+				vec3.transformMat3(p3_dest_vec3,vp3,trans_mat3);
+
+				this.p1 = {x:p1_dest_vec3[0],y:p1_dest_vec3[1]};
+				this.p2 = {x:p2_dest_vec3[0],y:p2_dest_vec3[1]};
+				this.p3 = {x:p3_dest_vec3[0],y:p3_dest_vec3[1]};
+
+				this.draw('red');
+			}
+
+			p.skewY =function(c){
+				var trans_mat3 = [];
+				mat3.copy(trans_mat3,[1,c,0,0,1,0,0,0,1]); //创建一个错切矩阵
+
+				var vp1 = vec3.fromValues(this.p1.x,this.p1.y,1);
+				var vp2 = vec3.fromValues(this.p2.x,this.p2.y,1); 
+				var vp3 = vec3.fromValues(this.p3.x,this.p3.y,1); 
+
+
+				var center = this.getCenter();
+				var trans_pintyi_mat3 = []; 
+				mat3.copy(trans_pintyi_mat3,[1,0,0,0,1,0,-center.x,-center.y,1]);//创建一个平移矩阵,平移到中心点
+
+				var temp_mat3 =[];
+				mat3.multiply(temp_mat3,trans_mat3,trans_pintyi_mat3); //先平移到中心点,再转旋转
+
+				var trans_pintyi2_mat3 = []; 
+				mat3.copy(trans_pintyi2_mat3,[1,0,0,0,1,0,center.x,center.y,1]);//创建一个平移矩阵
+				var temp2_mat3=[];
+				mat3.multiply(temp2_mat3,trans_pintyi2_mat3,temp_mat3);
+
+				var p1_dest_vec3 = [];
+				var p2_dest_vec3 = [];
+				var p3_dest_vec3 = [];				
+				vec3.transformMat3(p1_dest_vec3,vp1,temp2_mat3);
+				vec3.transformMat3(p2_dest_vec3,vp2,temp2_mat3);
+				vec3.transformMat3(p3_dest_vec3,vp3,temp2_mat3);
+
+				this.p1 = {x:p1_dest_vec3[0],y:p1_dest_vec3[1]};
+				this.p2 = {x:p2_dest_vec3[0],y:p2_dest_vec3[1]};
+				this.p3 = {x:p3_dest_vec3[0],y:p3_dest_vec3[1]};
+
+				this.draw('red');
+			}
+
+			p.reflexX = function(){
+			}
+
+			p.reflexY = function(){
+			}
+
+			var triangle = new Triangle({x:1,y:1},{x:2,y:1},{x:1.5,y:3});
+		    triangle.draw();
+
+		/*	var triangle2 = new Triangle({x:1,y:1},{x:2,y:1},{x:1.5,y:3});
+		    triangle2.draw();*/
+		    //triangle.translate(2,0);
+
+	   		var controls = new function () {
+	            this.translateX  = 0; //平移X
+	            this.translateY  = 0; //平移Y
+	            this.translate  = '0,0'; //平移XY
+
+	            this.scale = 1;
+
+	            this.rotate = 0;
+
+	            this.reflex = 'x';
+
+	            this.skewX = 0;
+	            this.skewY = 0;
+	        }	        
+	       var gui = new dat.GUI();
+
+			gui.add(controls, 'translateX', -2,2).onChange(function (e) {
+				pc.init();
+				pc.draw();
+				//triangle.reset();
+				triangle.clone();
+		        triangle.translate(e,0);
+		    });
+
+			gui.add(controls, 'translateY', -2,2).onChange(function (e) {
+				pc.init();
+				pc.draw();
+				//triangle.reset();
+				triangle.clone();
+		        triangle.translate(0,e);
+		    });
+
+			gui.add(controls, 'translate', ['-2,-1','-1,-1','0,0','1,1','1,2','2,1']).onChange(function (e) {
+				pc.init();
+				pc.draw();
+				var xy = e.split(',');
+				//triangle.reset();
+				triangle.clone();
+		        triangle.translate(xy[0],xy[1]);
+		    });
+
+			gui.add(controls, 'scale', 0,2).onChange(function (e) {
+				pc.init();
+				pc.draw();
+				//triangle.reset();
+				triangle.clone();
+		        triangle.scale(e,e);
+		    });
+
+			gui.add(controls, 'rotate', -180, 180).onChange(function (e) {
+				pc.init();
+				pc.draw();
+				//triangle.reset();
+				triangle.clone();
+		        triangle.rotate(e);
+		    });
+
+			gui.add(controls, 'skewX', -2, 2).onChange(function (e) {
+				pc.init();
+				pc.draw();
+				//triangle.reset();
+				triangle.clone();
+		        triangle.skewX(e);
+		    });
+
+			gui.add(controls, 'skewY', -2, 2).onChange(function (e) {
+				pc.init();
+				pc.draw();
+				//triangle.reset();
+				triangle.clone();
+		        triangle.skewY(e);
+		    });
+		}
+		window.onload = init;
+	</script>
+</body>
+</html>

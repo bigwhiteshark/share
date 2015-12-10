@@ -110,9 +110,10 @@ p.drawPoint = function(x, y, width, height) {
     }
 }
 
-p.drawLine = function(x, y, dx, dy) {
+p.drawLine = function(x, y, dx, dy, strokeColor) {
     var context = this.context;
     context.beginPath();
+    context.strokeStyle  = strokeColor;
     if (dx != undefined && dy != undefined) {
         context.moveTo(x, y);
     }
@@ -137,6 +138,6 @@ p.drawArc = function(x, y, strokeColor) {
    ctx.fillStyle = "red";
     ctx.fillText("p("+x+","+y+")",x-width/4,y+10);*/
     ctx.fillStyle = "red";
-    ctx.arc(x,y,3,0,2*Math.PI);
+    ctx.arc(x,y,2,0,2*Math.PI);
     ctx.fill();
 }

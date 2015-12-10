@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>矩阵及几何变换</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>矩阵及几何变换</h1>
+					<h4>三维引擎的开发(一)</h4>
+					<p>
+						<small>Created by <a href="https://github.com/bigwhiteshark/">bigwhiteshark</a></small>
+					</p>
+				</section>
+
+                <section>
+                    <h2>目录</h2>
+                    <ul>
+                        <li class="fragment highlight-red">矩阵及几何变换</li>
+                        <li>坐标变换</li>
+                        <li>投影</li>
+                        <li>渲染</li>
+                    </ul>
+					<aside class="notes">
+					整个分享一共分为上面四个部分，也是开发一个三维引擎的关键四个要素。开发一个完整的三维引擎很复杂，我们这里只是介绍思路，及简单的实现。暂时不做详细说明，等后面再一个一个地慢慢讨论。
+					</aside>
+                </section>
+
+				<section>
+					<h2>什么是计算机图形学</h2>
+					<p>
+					</p>
+					<aside class="notes">
+					什么是计算机图形学？计算机图形学(Computer Graphics，简称CG)的内容比较丰富，与很多学科都有交叉，因此笔者认为是无法严格定义的。在“Wiki百科”和“百度百科”上，对“计算机图形学”的解释为：计算机图形学是一种使用数学算法将二维或三维图形转化为计算机显示器的栅格形式的科学。简单地说，计算机图形学的主要研究内容就是研究如何在计算机中表示图形、以及利用计算机进行图形的计算、处理和显示的相关原理与算法。虽然通常认为CG是指三维图形的处理，事实上也包括了二维图形及图像的处理。
+					</aside>
+				</section>
+
+
+				<section>
+					<h2>定义</h2>
+					<p>
+					<ul>
+					<li>广义<br/><span style="font-size:24px">是利用计算机研究图形的表示、生成、处理、显示的学科。如图形硬件、图形标准、图形交互技术、光栅图形生成算法、曲线曲面造型、实体造型、真实感图形计算与显示算法，以及科学计算可视化、计算机动画、自然景物仿真、虚拟现实等</span></li>
+					<li>狭义<br/><span style="font-size:24px">是一种使用数学算法将二维或三维图形转化为计算机显示器的栅格形式的科学</span></li>
+					</ul>
+					</p>
+					<aside class="notes">
+					离开不开数学工具，借助数学与物理
+					</aside>
+				</section>
+
+
+                <section>
+                    <h2>内容</h2>
+                    <ul>
+                        <li>建模(Modeling)<br/><span style="font-size:24px">要在计算机中表示一个三维物体，首先要有它的几何模型表达。三维模型的建模是计算机图形学的基础</span></li>
+                        <li>渲染(Rendering)<br/><span style="font-size:24px">有了三维模型或场景，怎么把这些三维几何模型画出来</span></li>
+                        <li>动画(Animation)<br/><span style="font-size:24px">采用连续播放静止图像的方法产生物体运动的效果。</span></li>
+                        <li>人机交互(HCI)<br/><span style="font-size:24px">是指人与计算机之间以一定的交互方式或交互界面，来完成确定任务的人与计算机之间的信息交换过程。</span></li>
+                    </ul>
+                    <aside class="notes">
+                    	人机交互:Human–computer Interaction
+                    </aside>
+                </section>
+
+
+				<section>
+					<h2>流程</h2>
+					<p>
+						<img src="img/liucheng.png"/>
+					</p>
+					<aside class="notes">
+					每个部分都十分复杂
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵</h2>
+                    <ul>
+                        <li>矩阵的定义</li>
+                        <li>矩阵的运算</li>
+                        <li>矩阵转置</li>
+                        <li>矩阵变换</li>
+                        <li>组合变换</li>
+                        <li>矩阵在前端中的应用</li>
+                    </ul>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>什么是矩阵</h2>
+					<p style="text-align: left;font-size: 28px;">由 `m × n`个数`a_{ij}`排成的`m`行`n`列的数表称为`m`行`n`列的矩阵，简称`m × n`矩阵。记作：</p>
+					<p style="font-size: 30px;">$$ A = \left[\begin{matrix} a_{11} & ... & a_{1j} & & a_{1n} \\ ... & & & & ... \\ a_{i1} & & a_{ij} & & a_{in} \\  ... & & & & ... \\  a_{m1} & ... & a_{mj} & & a_{mn} \\ \end{matrix}\right]$$</p>
+					<p style="text-align: left;font-size: 28px;">
+					<span style="color:yellow">相等矩阵</span>：<br/>对于两个具有相同维数的矩阵，我们把同行同列的两个元素称为对应元素。<br/>两矩阵相等的充要条件是：它们具有相同的维数，并且所有的对应元素都相同。
+					</p>
+					<aside class="notes">
+					1、在数学中，矩阵（Matrix）是一个按照长方阵列排列的复数或实数集合。<br/>
+					2、矩阵是高等代数学中的常见工具，应用到多个学科中，如物理学、计算机中等。<br/>
+					3、今天我们讨论的是计算机图形学中矩阵的应用。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2>特殊矩阵</h2>
+					<p>&nbsp;</p>
+					<p>
+					<table>
+						<tr>
+							<td>零矩阵(0)</td>
+							<td>单位矩阵(E)</td>
+							<td>对角矩阵</td>
+						</tr>
+						<tr>
+							<td>$$\left[\begin{matrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \\ \end{matrix}\right]$$</td>
+							<td>$$\left[\begin{matrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ \end{matrix}\right]$$</td>
+							<td>$$\left[\begin{matrix} 5 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 8 \\ \end{matrix}\right]$$</td>
+						</tr>
+					</table>
+					</p>
+					<aside class="notes">
+					让我们来再来认识几个常用的特殊矩阵。
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵的加减</h2>
+					<p><img src="img/martixjia.png"/></p>
+					<p style="font-size: 26px;">
+					$$ A + B =  \left[\begin{matrix} 1 & 3 & 5 \\ 4 & 1 & 3 \\ 2 & 1 & 2 \\ \end{matrix}\right]  +  \left[\begin{matrix} 4 & 3 & 2 \\ 1 & 3 & 5 \\ 6 & 5 & 9 \\ \end{matrix}\right] = \left[\begin{matrix} 5 & 6 & 8 \\ 5 & 4 & 8 \\ ? & ? & ? \\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+					矩阵的加减运算要求两个矩阵具有相同的维数，因此只需在对应元素上进行加减运算即可
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵与标量相乘</h2>
+					<p><img src="img/martixscalar.png"/></p>
+					<p style="text-align: left;text-indent: 50px;">
+					$$ cA = 3 \times \left[\begin{matrix} 1 & 3 & 2 \\ 2 & 4 & 6 \\ 5 & 2 & 2 \\ \end{matrix}\right] = \left[\begin{matrix} 3 & 9 & 6 \\ ? & ? & ? \\ ? & ? & ? \\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+					矩阵与标量相乘，等于标量乘以矩阵中的每个元素。
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵相乘</h2>
+					<p><img src="img/martixmul.png"/></p>
+					<p style="text-align: left;text-indent: 50px;">
+					$$ A \times B = \left[\begin{matrix} 1 & 3 & 2 \\ 2 & 4 & 6 \\ \end{matrix}\right] \times \left[\begin{matrix} 3 & 1 \\ 1 & 2  \\ 7 & 4 \\ \end{matrix}\right] = \left[\begin{matrix} 20 & 15 \\ ? & ? \\ \end{matrix}\right]$$
+					</p>
+					<aside class="notes">
+					1)矩阵相乘要有意义，必须满足A 的列数等于B 的行数。<br/>
+					2)如果矩阵相乘有意义，那么A×B 的行数等于A 的行数，列数等于B 的列数。<br/>
+					*矩阵相乘不满足交换律，即A×B≠B×A<br/>
+					记法：A 每行的每个元素乘以B 每列的对应元素的结果的和，结果放在A 元素对应的位置
+					</aside>
+				</section>
+
+
+				<section>
+					<h2>矩阵转置</h2>
+					<p><img  style="height:200px;" src="img/martixt.png"/></p>
+					<p style="text-align: left;">
+					对于任意大小的矩阵 A 的转置矩阵表示为 `A^T`。
+					对于任意大小的矩阵，元素`a_(mn)` 在矩阵AT 中变为 `a_(nm)`
+					</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵变换</h2>
+                    <ul>
+                        <li>平移变换</li>
+                        <li>缩放变换</li>
+                        <li>错切变换</li>
+                        <li>旋转变换</li>
+                        <li>组合变换</li>
+                    </ul>
+					<aside class="notes">
+					1)矩阵在游戏编程中的具体应用：仿射变换。<br/>
+					2)变换是指在空间中能让物体发生运动的操作的总称，包括前后、上下、左右移动，缩小放大、旋转等。<br/>
+					3)仿射是指物体在变换之后应该保持先前的形状。
+					</aside>
+				</section>
+
+				<section>
+					<h2>什么是变换</h2>
+					<p>图形变换一般是指对图形的几何信息经过几何变换后产生新的图形。</p>
+					<aside class="notes">
+				对于线框图的变换，通常以点变换作为基础，把图形的一系列顶点作几何变换，连接新的顶点系列即可产生新的图形。对于用参数方程描述的图形，可以通过参数方程作几何变换，实现对图形的变换。<br/>
+				图形的的几何变换：对图形的几何信息经过平移、比例、旋转、斜切等变换后产生新的图形，是图形在方向、尺寸、各形状方面的变换。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维变换</h2>
+					<aside class="notes">
+					为了理解上的方便，我们先从二维变换开始介绍。因为我们大家都熟悉二维（或平面）。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维平移</h2>
+					<p><img style="height:200px;" src="img/pingyi.jpg"/></p>
+					<p>`x' = x + T_x`</p>
+					<p>`y' = y + T_y`</p>
+					<aside class="notes">
+						思考一下：将一个点从`p`位置移动到`p'`位置，我们会怎么做？？
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维平移</h2>
+					<p style="text-align: left;font-size:26px">如果用向量形式来表示位移前后的两个点</p>
+					<p style="font-size: 26px;"> $$ P = \left[\begin{matrix} x  \\ y \end{matrix}\right]  ，  P' = \left[\begin{matrix} x'  \\ y'\end{matrix}\right]  $$</p>
+					<p style="text-align: left;font-size: 26px;">如果令</p>
+					<p style="font-size: 26px;">$$ T = \left[\begin{matrix} T_x  \\ T_y \end{matrix}\right]  $$ </p>
+					<p style="text-align: left;font-size: 26px;">那么，可以用矩阵相加来表示P点的位移</p>
+					<p style="font-size: 26px;margin-left:260px;">
+						<span style="float:left">$$ \left[\begin{matrix} x'  \\ y'\end{matrix}\right] = $$</span> <span  style="float:left"> $$\left[\begin{matrix} x  \\ y \end{matrix}\right] + $$ </span> <span  style="color:yellow;font-weight: bold;float:left">$$ \left[\begin{matrix} T_x  \\ T_y \end{matrix}\right] $$</span> <span  style="float:left">$$ =  \left[\begin{matrix} x+T_x  \\ x+T_y \end{matrix}\right]$$</span>
+					</p>
+					<br/>
+					<p style="clear: both;margin-top:60px;">记为：` P' = P + T`</p>
+					<aside class="notes">
+						平移距离（Tx，Ty）称为平移向量或向量。如果用向量形式来表示位移前后的两个点
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维平移</h2>
+					<p class="fragment" style="text-align: left;">矩阵乘法</p>
+				    <p style="font-size: 24px;width: 560px;margin-left: 200px;text-align: left">
+                        <span class="fragment" style="float: left">$$ \left[\begin{matrix} x' \\ y'\\ 1\\ \end{matrix}\right] = $$</span><span class="fragment" style="float: right"> $$ = \left[\begin{matrix} x+T_x \\ y+T_y\\ 1\\ \end{matrix}\right]$$</span> <span class="fragment" style="float: right"> $$\times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right]$$</span> <span class="fragment" style="float: right;color:yellow;font-weight: bold;">$$\left[\begin{matrix} 1 & 0 & T_x \\ 0 & 1 & T_y \\ 0 & 0 & 1 \end{matrix}\right]$$</span>
+                    </p>
+					<p class="fragment" style="clear:both;margin-top:190px;">记为：` P' = T \times P `</p>
+					<aside class="notes">
+					1)物体的平移运动既可以由矩阵的加法来完成，也可以利用矩阵的乘法来实现。<br/>
+					2)如果对物体进行的仅是平移变换，那么采用矩阵加法效率更高。<br/>
+					3)如果还要对物体进行缩放和旋转变换，那么应该用矩阵乘法来实现。<br/>
+					注意：当对矩阵进行加法运算时仅仅是将对应元素相加，因此参加运算的两个矩阵的结构必须相同。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维平移</h2>
+					<p class="fragment" style="text-align: left;">矩阵乘法(另一种表现形式)</p>
+				    <p style="font-size: 24px;margin-left: 140px;text-align: left">
+                        <span class="fragment" style="float: left;margin-top: 40px">$$ \left[\begin{matrix} x' & y' & 1 \end{matrix}\right] = $$</span><span class="fragment" style="float: left;margin-top: 40px"> $$\left[\begin{matrix} x & y & 1\\ \end{matrix}\right]\times $$</span>  <span class="fragment" style="float: left;color:yellow;font-weight: bold;">$$\left[\begin{matrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ T_x & T_y & 1 \end{matrix}\right]$$</span><span class="fragment" style="float: left;margin-top: 40px"> $$ = \left[\begin{matrix} x+T_x & y+T_y & 1\\ \end{matrix}\right]$$</span>
+                    </p>
+					<p class="fragment" style="clear:both;margin-top:190px;">记为：` P' = P \times T `</p>
+					<aside class="notes">
+					有两种表现形式，转换矩阵放在前面或放在后面<br/>
+					这一种比较符合我们习惯，但我们讲的是opengl中的表现形式.
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维缩放</h2>
+					<p><img style="height:200px;" src="img/scale.jpg"/></p>
+					<p>`x' = x \times S_x`</p>
+					<p>`y' = y \times S_y`</p>
+					<aside class="notes">
+						1.Sx、Sy可以是任意正数<br/>
+						2.Sx、Sy<1，则物体缩小<br/>
+						3.Sx、Sy>1，则物体放大<br/>
+						4.Sx、Sy＝1，则物体大小形状不变
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维缩放</h2>
+					<p style="text-align: left;font-size: 26px;">如果令</p>
+					<p style="font-size: 26px;">
+						$$ S = \left[\begin{matrix} S_x & 0  \\  0 & S_y \end{matrix}\right]  $$
+					</p>
+					<p style="text-align: left;font-size: 26px;">则比例变换可以表示成下面的矩阵形式：</p>
+					<p style="font-size: 26px;">
+						<span style="float:left;margin-left:260px;">$$ S = \left[\begin{matrix} x'  \\ y' \end{matrix}\right]  = $$</span> <span style="float:left;color:yellow">$$ \left[\begin{matrix} S_x & 0  \\  0 & S_y \end{matrix}\right] $$</span> <span style="float:left">$$ \times \left[\begin{matrix} x  \\ y \end{matrix}\right]  = $$</span> <span style="float:left">$$ \left[\begin{matrix} xS_x \\ yS_y \end{matrix}\right] $$</span>
+					</p>
+					<p style="clear:both;margin-top:130px">记为：`P' = S \times P `</p>
+					<aside class="notes">
+						思考一下：将一个点从`p`位置移动到`p'`位置，我们会怎么做？
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维缩放</h2>
+					<p><img src="img/martixscale.png" /></p>
+					<p style="font-size: 26px;width: 600px;margin-left:160px;">
+						<span  class="fragment" style="float: left"> $$ \left[\begin{matrix} x' \\ y'\\ 1\\ \end{matrix}\right] = $$</span> <span  class="fragment" style="float:right">$$= \left[\begin{matrix} S_x \times x \\ S_y \times y\\ 1\\ \end{matrix}\right]$$</span><span  class="fragment" style="float:right">$$\times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right]$$</span>  <span  class="fragment" style="float: right;color:yellow;font-weight: bold;">$$ \left[\begin{matrix} S_x & 0 & 0 \\ 0 & S_y & 0 \\ 0 & 0 & 1 \end{matrix}\right] $$ </span> 
+					</p>
+					<aside class="notes">
+						我们可以使用矩阵乘法对一个物体进行缩放。如果对物体的所有顶点进行了缩放，那么变换的结果便是缩放了整个物体。<br/>
+						其中，Sx 为x 方向上的缩放因子，Sy 是y 方向上的缩放因子。<br/>
+						如果要进行均匀缩放的话，即保持物体原先的形状，那么就要保证Sx = Sy。<br/>
+						当为缩放因子Sx、Sy 赋值时，如果取值位于0 和1 之间，那么变换的结果将缩小物体；<br/>
+						反之，如果大于1，那么变换将扩大物体。<br/>
+						如果缩放因子为负值时，那么变换会使物体产生镜像效果。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维对称</h2>
+					<table style="font-size: 22px;">
+						<tbody>
+							<tr>
+								<td>
+									<p style="font-size: 26px;color:yellow">以y轴为对称线的对称变换</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-20px;width:157px;height:121px;" src="img/martixmirror.png" /></p>
+									<p style="float: left;display:inline-block">
+										<span style="float:left">$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = $$</span> <span class="fragment fade-in visible" style="float:left;color:yellow;">$$\left[\begin{matrix} -1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1\end{matrix}\right] $$</span> <span style="float:left">$$\times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$</span> <span style="float:left">$$= \left[\begin{matrix} -x \\ y\\ 1\\ \end{matrix}\right] $$</span>
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<td>									
+									<p  style="font-size: 26px;color:yellow">以x轴为对称线的对称变换</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-16px" src="img/martixmirror1.png" /></p>
+									<p style="float: left;display:inline-block">
+										<span style="float:left">$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = $$</span> <span class="fragment fade-in visible" style="float:left;color:yellow;">$$ \left[\begin{matrix} 1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 1\end{matrix}\right] $$</span> <span style="float:left">$$\times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$</span> <span style="float:left">$$= \left[\begin{matrix} x \\ -y\\ 1\\ \end{matrix}\right] $$</span>
+									</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<aside class="notes">
+						1、以y轴为对称线的对称变换。变换后，图形点集的x坐标值不变，但符号相反；y坐标值不变。<br/>
+						2、以x轴为对称线的对称变换。变换后，变换后，图形点集的x和y坐标对调，但符号相反。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维对称</h2>
+					<table style="font-size: 22px;">
+						<tbody>
+							<tr>
+								<td>
+									<p  style="font-size: 26px;color:yellow">以原点为对称的对称变换</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-20px;width:157px;height:121px;" src="img/martixmirror2.png" /></p>
+									<p style="float: left;display:inline-block">
+										<span style="float:left"> $$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = $$ </span> <span class="fragment fade-in visible" style="float:left;color:yellow">$$ \left[\begin{matrix} -1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 1\end{matrix}\right] $$</span> <span style="float:left">$$\times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$</span> <span style="float: left;">$$= \left[\begin{matrix} -x \\ -y\\ 1\\ \end{matrix}\right] $$</span>
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<td>									
+									<p  style="font-size: 26px;color:yellow">以直线y=x为对称线的对称变换</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-16px;width:157px;height:121px;" src="img/martixmirror3.png" /></p>
+									<p style="float: left;display:inline-block">
+										<span style="float:left">$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = $$</span><span class="fragment fade-in visible" style="float:left;color:yellow;"> $$\left[\begin{matrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1\end{matrix}\right] $$</span> <span style="float:left">$$ \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$</span> <span style="float:left">$$= \left[\begin{matrix} y \\ x\\ 1\\ \end{matrix}\right] $$
+									</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<aside class="notes">
+						1、以原点为对称的对称变换。变换后，图形点集的x和y坐标值不变，但符号相反。<br/>
+						2、以直线y=x为对称线的对称变换。变换后，图形点集的x和y坐标对调。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维对称</h2>
+					<table style="font-size: 22px;">
+						<tbody>
+							<tr>
+								<td>									
+									<p  style="font-size: 26px;color:yellow">以直线y=-x为对称线的对称变换</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-16px;width:157px;height:121px;" src="img/martixmirror3.png" /></p>
+									<p style="float: left;display:inline-block">
+										<span style="float:left">$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] = $$</span> <span  class="fragment fade-in visible" style="float:left;color:yellow;"> $$ \left[\begin{matrix} 0 & -1 & 0 \\ -1 & 0 & 0 \\ 0 & 0 & 1\end{matrix}\right] $$</span> <span style="float:left"> $$ \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$</span>  <span style="float:left">$$ = \left[\begin{matrix} -y \\ -x\\ 1\\ \end{matrix}\right] $$</span>
+									</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<aside class="notes">
+						以直线y=-x为对称线的对称变换。变换后，图形点集的x和y坐标对调,但符号相反。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维错切</h2>
+					<table style="font-size: 22px;">
+						<tbody>
+							<tr>
+								<td>
+									<p style="font-size: 26px;color:yellow">沿x方向的错切</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-20px;width:157px;height:121px;" src="img/martixskew1.png" /></p>
+									<p style="float: left;display:inline-block">
+										<span style="float:left">$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] =$$</span>  <span  class="fragment fade-in visible" style="float:left;color:yellow;">$$  \left[\begin{matrix} 1 & c & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1\end{matrix}\right] $$</span>  <span style="float:left">$$ \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$</span>  <span style="float:left">$$ = \left[\begin{matrix} x + cy \\ y\\ 1\\ \end{matrix}\right] $$</span>
+									</p>
+								</td>
+							</tr>
+							<tr>
+								<td>									
+									<p style="font-size: 26px;color:yellow">沿y方向的错切</p>
+									<p style="float: left;display:inline-block"><img style="margin-top:-16px;width:157px;height:121px;" src="img/martixskew2.png" /></p>
+									<p style="float: left;display:inline-block">
+										<span style="float:left">$$ \left[\begin{matrix} x'\\ y' \\ 1\\ \end{matrix}\right] =$$</span> <span  class="fragment fade-in visible"  style="float:left;color:yellow;"> $$  \left[\begin{matrix} 1 & 0 & 0 \\ c & 1 & 0 \\ 0 & 0 & 1\end{matrix}\right] $$</span>  <span style="float:left">$$ \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$</span> <span style="float:left"> $$ = \left[\begin{matrix} x \\ y+cx\\ 1\\ \end{matrix}\right] $$</span>
+									</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<aside class="notes">
+						二维错切变换：是一种会使物体形状发生变化的变换。常用的错切变换有两种：改变x坐标值和改变y坐标值。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维旋转</h2>
+					<p><img style="height:200px;" src="img/roate.png" /></p>
+					<p style="font-size: 26px;">
+						<span class="fragment">` x^'= rcos(\theta+\phi) =`</span><span class="fragment">`rcos\thetacos\phi - rsin\thetasin\phi =` </span><span class="fragment">`xcos\theta-ysin\theta `</span>
+					</p>
+					<p style="font-size: 26px;">
+						<span class="fragment">` y^'= rsin(\theta+\phi) = `</span><span class="fragment">`rcos\thetasin\phi + rsin\thetacos\phi =` </span><span class="fragment">`xsin\theta+ycos\theta `</span>
+					</p>
+					<aside class="notes">
+						利用矩阵相乘可以对一个物体进行旋转变换。<br/>
+						正的旋转角度意味着沿逆时针方向进行旋转，而负的旋转角度意味着沿顺时针方向进行旋转。<br/>
+						3D 空间中的旋转问题涉及到三个平面，分别是xy、xz、yz。<br/>
+						其中，xy 平面就是计算机屏幕所在的2D 平面。<br/>
+						因此，在3D 空间的旋转就有3 种情况，绕x 轴、绕y 轴、绕z 轴。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维旋转</h2>
+					<p style="text-align: left;font-size: 26px;">相对于坐标原点的旋转变换公式</p>
+					<p style="font-size: 26px;"> `x^'= xcos\theta-ysin\theta `</p>
+					<p style="font-size: 26px;"> `y^'= xsin\theta+ycos\theta `</p>
+					<p style="text-align: left;font-size: 26px;">如果</p>
+					<p style="font-size: 26px;">$$ R = \left[\begin{matrix} cos\theta & -sin\theta  \\ sin\theta & cos\theta \end{matrix}\right]  $$ </p>
+					<p style="text-align: left;font-size: 26px;">则</p>
+					<p style="font-size: 26px;margin-left:230px;">
+						<span style="float:left">$$  \left[\begin{matrix} x'\\ y' \\ \end{matrix}\right] = $$</span> <span style="float:left;color:yellow"> $$ \left[\begin{matrix} cos\theta & -sin\theta  \\ sin\theta & cos\theta \end{matrix}\right] $$</span> <span style="float:left"> $$ \times \left[\begin{matrix} x\\ y \\ \end{matrix}\right] $$</span> <span style="float:left"> $$ = \left[\begin{matrix} xcos\theta - ysin\theta\\ xcos\theta + ysin\theta \ \\ \end{matrix}\right]$$</span>
+					</p>
+					<p style="clear:both;margin-top:130px;">记为：`P^' = R \times P`</p>
+					<aside class="notes">
+						利用矩阵相乘可以对一个物体进行旋转变换。<br/>
+						正的旋转角度意味着沿逆时针方向进行旋转，而负的旋转角度意味着沿顺时针方向进行旋转。<br/>
+						3D 空间中的旋转问题涉及到三个平面，分别是xy、xz、yz。<br/>
+						其中，xy 平面就是计算机屏幕所在的2D 平面。<br/>
+						因此，在3D 空间的旋转就有3 种情况，绕x 轴、绕y 轴、绕z 轴。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维旋转</h2>
+					<p><img src="img/martixroate.png" /></p>
+					<p style="font-size: 26px;margin-left:100px;">
+						<span style="float:left">$$ \left[\begin{matrix} x' \\ y'\\ 1\\ \end{matrix}\right] = $$</span> <span style="float:left;color:yellow"> $$ \left[\begin{matrix} cosθ & -sinθ & 0 \\ sinθ & cosθ & 0 \\ 0 & 0 & 1 \end{matrix}\right] $$</span> <span style="float:left"> $$  \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$</span>  <span style="float:left">$$  = \left[\begin{matrix} xcosθ- ysinθ \\ xsinθ+ ycosθ\\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<aside class="notes">
+						利用矩阵相乘可以对一个物体进行旋转变换。<br/>
+						正的旋转角度意味着沿逆时针方向进行旋转，而负的旋转角度意味着沿顺时针方向进行旋转。<br/>
+						3D 空间中的旋转问题涉及到三个平面，分别是xy、xz、yz。<br/>
+						其中，xy 平面就是计算机屏幕所在的2D 平面。<br/>
+						因此，在3D 空间的旋转就有3 种情况，绕x 轴、绕y 轴、绕z 轴。<br/>
+					</aside>
+				</section>
+
+				<section>
+					<h2 style="font-size: 42px">二维复合变换</h2>
+					<p style="font-size: 22px;">绕任意点（或称基准点）（`x_r`,`y_r`）的旋转</p>	
+					<p><img  src="img/trans2_1.png" /></p>
+					<table class="fragment">
+						<tr>
+							<td><img  style="width:157px;height:121px"  src="img/trans2_1.png" /></td>
+							<td style="vertical-align: middle">=></td>
+							<td><img  style="width:157px;height:121px"  src="img/trans2_2.png" /></td>
+							<td style="vertical-align: middle">=></td>
+							<td><img  style="width:157px;height:121px"  src="img/trans2_3.png" /></td>
+							<td style="vertical-align: middle">=></td>
+							<td><img  style="width:157px;height:121px"  src="img/trans2_4.png" /></td>
+						</tr>
+					</table>
+					<aside class="notes">
+						　二维复合变换：前面所讨论的图形变换是相对于坐标原点或坐标轴来进行的。在实际中，常常需要相对于任意点或任意轴来进行变换。为了做到这一点，可通过计算多个基本变换矩阵的乘积来得到总的变换矩阵或称为复合变换矩阵，从而实现任意顺序的组合变换。<br/>
+						（1）平移物体使基准点位置被移到坐标原点；<br/><br/>
+						（2）绕坐标原点旋转；<br/>
+						（3）平移物体使基准点回到原始位置。
+					</aside>
+				</section>
+
+				<section>
+					<h2>二维复合变换</h2>
+					<p style="font-size: 22px;">绕任意点（或称基准点）（`x_r`,`y_r`）的旋转</p>
+					<p>&nbsp;</p>	
+					<p style="margin-top:20px;font-size: 24px;width:890px">
+						<span class="fragment" style="float: left">$$\left[\begin{matrix} x' \\ y'\\ 1\\ \end{matrix}\right] =$$</span><span class="fragment" style="float:right">$$ \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right]$$ </span><span class="fragment" style="float:right">$$\left[\begin{matrix} 1 & 0 & -x_r \\ 0 & 1 & -y_r \\ 0 & 0 & 1 \end{matrix}\right] \times $$</span><span class="fragment" style="float:right">$$\left[\begin{matrix} cosθ & -sinθ & 0 \\ sinθ & cosθ & 0 \\ 0 & 0 & 1 \end{matrix}\right] \times$$</span><span class="fragment" style="float:right">$$\left[\begin{matrix} 1 & 0 & x_r \\ 0 & 1 & y_r \\ 0 & 0 & 1 \end{matrix}\right] \times$$</span><span class="fragment">$$ = \left[\begin{matrix} xcosθ & - ysinθ & ( 1-cosθ)x_r+y_rsinθ\\ sinθ& cosθ& (1-cosθ)y_r-x_rsinθ\\ 0 & 0 & 1\end{matrix}\right] $$</span>
+					<!-- 	<span style="float:left">$$ \left[\begin{matrix} x' \\ y'\\ 1\\ \end{matrix}\right] =$$</span><span class="fragment" style="float:left">$$\left[\begin{matrix} 1 & 0 & x_r \\ 0 & 1 & y_r \\ 0 & 0 & 1 \end{matrix}\right] \times $$</span> <span class="fragment" style="float:left">$$\left[\begin{matrix} cosθ & -sinθ & 0 \\ sinθ & cosθ & 0 \\ 0 & 0 & 1 \end{matrix}\right] \times $$</span> <span class="fragment" style="float:left">$$\left[\begin{matrix} 1 & 0 & -x_r \\ 0 & 1 & -y_r \\ 0 & 0 & 1 \end{matrix}\right] \times $$</span> <span class="fragment" style="float:left">$$ \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$ </span> <span>$$ = \left[\begin{matrix} xcosθ & - ysinθ & ( 1-cosθ)x_r+y_rsinθ\\ sinθ& cosθ& (1-cosθ)y_r-x_rsinθ\\ 0 & 0 & 1\end{matrix}\right] $$</span> -->
+					</p>
+					<aside class="notes">
+					绕任意点的旋转
+					</aside>
+				</section>
+
+				<section>
+					<h2 style="font-size: 42px">二维复合变换</h2>
+					<p style="font-size: 22px;">相对任意点的比例变换</p>	
+					<p><img  src="img/2d_scale1.png" /></p>
+					<table>
+						<tr>
+							<td><img  style="width:157px;height:121px"  src="img/2d_scale1.png" /></td>
+							<td style="vertical-align: middle">=></td>
+							<td><img  style="width:157px;height:121px"  src="img/2d_scale2.png" /></td>
+							<td style="vertical-align: middle">=></td>
+							<td><img  style="width:157px;height:121px"  src="img/2d_scale3.png" /></td>
+							<td style="vertical-align: middle">=></td>
+							<td><img  style="width:157px;height:121px"  src="img/2d_scale4.png" /></td>
+						</tr>
+					</table>
+					<aside class="notes">
+						相对任意点（固定点）（xf,yf）的比例变换：该变换可分成如图所示的三个步骤来实现，从而实现任意顺序的组合变换。<br/>
+						（1）平移物体使固定点与坐标原点重合；<br/>
+						（2）绕坐标原点旋转；<br/>
+						（3）平移物体使基准点回到原始位置。
+					</aside>
+				</section>
+
+
+				<section>
+					<h2>二维复合变换</h2>
+					<p>&nbsp;</p>
+					<p style="font-size: 24px">
+						$$ \left[\begin{matrix} x'\\ y'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} a & c & e \\ b & d & f \\ p & q & s \end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right]$$
+					</p>
+					<p class="fragment"><img height="254px" src="img/transform2d.jpg"/></p>
+					<aside class="notes">
+						我们总结一下，二维变换矩阵形式。
+					</aside>
+				</section>
+
+				<section>
+					<h2 style="font-size: 42px">矩阵变换组合特性</h2>
+					<table>
+						<tr>
+							<td><img  src="img/2d_zhuhe1.png" /></td>
+							<td style="vertical-align: middle"><></td>
+							<td><img  src="img/2d_zhuhe2.png" /></td>
+						</tr>
+					</table>
+					<aside class="notes">
+						即矩阵乘法满足结合率，不满足交换率。在进行连续变换时一定要按变换次序进行变换矩阵的运算，否则不同次序的变换会产生不同的变换结果。
+					</aside>
+				</section>
+
+				<section>
+					<h2>示例</h2>
+					<p style="text-align: left;font-size: 24px;">
+					要对一个三角形（中心<75，93>）以中心旋转左转90°，那么一共需要执行如下几步：<br/>
+					① 将三角形的中心移动到原点，即x 轴左移75 个单位，y 轴移动93 个单位。<br/>
+					② 对三角形进行旋转。<br/>
+					③ 将中心点移回<75，93>处。
+					</p>
+					<p  class="fragment"  style="font-size: 24px">
+						$$ \left[\begin{matrix} x'\\ y'\\ 1\\ \end{matrix}\right] =  \left[\begin{matrix} 1 & 0 & 75 \\ 0 & 1 & 93 \\ 0 & 0 & 1 \end{matrix}\right] \left[\begin{matrix} cos90^\circ & -sin90^\circ & 0 \\sin90^\circ & cos90^\circ& 0 \\  0 & 0 & 1\end{matrix}\right] \left[\begin{matrix} 1 & 0 & -75 \\ 0 & 1 & -93 \\ 0 & 0 & 1 \end{matrix}\right] \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$ $$ = \left[\begin{matrix} 0 & -1 & 168 \\ 1 & 0 & 18 \\ 0 & 0 & 1 \end{matrix}\right] \left[\begin{matrix} x \\ y\\ 1\\ \end{matrix}\right] $$
+					</p>
+					<aside class="notes">
+						上述提到的变换可以整合到一起，这样可以使程序在执行时更加快速，当然，这会增加编程时的难度。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维变换</h2>
+					<aside class="notes">
+						三维几何变换是二维几何变换的扩展。三维齐次变换可用4×4矩阵表示。
+					</aside>
+				</section>
+
+				<section>
+					<h2>笛卡儿坐标系</h2>
+					<p>
+					<img class="fragment"  style="vertical-align: middle"  width="372"  src="img/coordinate.png">
+					<img class="fragment"  style="vertical-align: middle"  height="252"  src="img/coordinate-system1.jpg">
+					</p>
+					<aside class="notes">
+					在介绍三维变换之前，我们先熟悉一下坐标系。想想十分熟悉的坐标系是什么？经常接触的？世界坐标系、观察坐标系或用户坐标系、投影坐标系、屏幕坐标系
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维平移</h2>
+					<p style="text-align: left;font-size: 26px">
+					矩阵加法
+					</p>
+					<p style="font-size: 24px;margin-left: 140px">
+						<span style="float:left;">$$ \left[\begin{matrix} x' \\ y'\\ z' \\ \end{matrix}\right] =  $$</span><span  style="float:left;"> $$\left[\begin{matrix} x \\ y\\ z\\ \end{matrix}\right] + $$</span><span class="fragment" style="float:left;color:yellow"> $$ \left[\begin{matrix} d_x \\ d_y\\ d_z\\ \end{matrix}\right]  $$</span><span style="float:left;"> $$= \left[\begin{matrix} x+d_x \\ y+d_y\\ z+d_z\\ \end{matrix}\right]$$</span>
+					</p>
+					<p style="text-align: left;font-size: 26px;clear:both">
+					矩阵乘法
+					</p>
+					<p style="font-size: 24px;font-size: 24px;margin-left: 140px">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = $$</span><span class="fragment" style="float:left;color:yellow"> $$ \left[\begin{matrix} 1 & 0 & 0 & d_x \\ 0 & 1 & 0 & d_y \\ 0 & 0 & 1 & d_z \\ 0 & 0 & 0 & 1\end{matrix}\right] $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] $$</span><span style="float:left;"> $$  = \left[\begin{matrix} x+d_x \\ y+d_y\\ z+d_z\\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<aside class="notes">
+					1)物体的平移运动既可以由矩阵的加法来完成，也可以利用矩阵的乘法来实现。<br/>
+					2)如果对物体进行的仅是平移变换，那么采用矩阵加法效率更高。<br/>
+					3)如果还要对物体进行缩放和旋转变换，那么应该用矩阵乘法来实现。<br/>
+					注意：当对矩阵进行加法运算时仅仅是将对应元素相加，因此参加运算的两个矩阵的结构必须相同。
+					dx,dy,dz分别为在x,y,z坐标轴方向上的平移量。
+					</aside>
+				</section>
+
+
+				<section>
+					<h2>三维平移</h2>
+					<p style="text-align: left;font-size: 26px">
+					矩阵乘法(另一种表现形式,旋转、错切、对称类同）
+					</p>
+					<p style="font-size: 20px;">
+						<span style="float:left;margin-top:50px;">$$ \left[\begin{matrix} x' & y' & z' & 1 \end{matrix}\right] = $$</span><span style="float:left;margin-top:50px;"> $$ \left[\begin{matrix} x & y & z & 1\\ \end{matrix}\right] \times  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ d_x & d_y & d_z & 1\end{matrix}\right] $$</span><span style="float:left;margin-top:50px;"> $$  = \left[\begin{matrix} x+d_x & y+d_y & z+d_z & 1 \end{matrix}\right] $$</span>
+					</p>
+					<aside class="notes">
+					另一种表现形式
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维缩放</h2>
+					<p>&nbsp;</p>
+					<p style="font-size: 26px;margin-left:140px">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = $$</span><span style="float:left;color:yellow"> $$  \left[\begin{matrix} S_x & 0 & 0 & 0 \\ 0 & S_y& 0 & 0 \\ 0 & 0 & S_z & 0 \\ 0 & 0 & 0 & 1\end{matrix}\right] $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] $$</span><span style="float:left;"> $$ = \left[\begin{matrix} S_x \times x \\ S_y \times y\\ S_z \times z\\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+
+					<aside class="notes">
+						三维比例变换：沿各坐标轴方向分别乘以一个比例系数，以实现各个方向上的缩放功能.<br/>
+						我们可以使用矩阵乘法对一个物体进行缩放。如果对物体的所有顶点进行了缩放，那么变换的结果便是缩放了整个物体。<br/>
+						其中，Sx 为x 方向上的缩放因子，Sy 是y 方向上的缩放因子。<br/>
+						如果要进行均匀缩放的话，即保持物体原先的形状，那么就要保证Sx = Sy。<br/>
+						当为缩放因子Sx、Sy 赋值时，如果取值位于0 和1 之间，那么变换的结果将缩小物体；<br/>
+						反之，如果大于1，那么变换将扩大物体。<br/>
+						如果缩放因子为负值时，那么变换会使物体产生镜像效果。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维旋转</h2>
+					<p><img src="img/3droate.jpg" /></p>
+					<aside class="notes">
+						三维旋转变换：是指将物体绕某个坐标轴旋转一个角度，所得到的空间位置变化。我们规定旋转正方向与坐标轴矢量符合右手法则，即从坐标轴正值向坐标原点观察，逆时针方向转动的角度为正。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维旋转</h2>
+					<p>&nbsp;</p>
+					<p style="text-align: left;">
+					绕z轴旋转θ角
+					</p>
+					<p style="font-size: 24px;margin-left:140px">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} cosθ & -sinθ & 0 & 0 \\ sinθ & cosθ& 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right]  $$</span><span style="float:left;"> $$ = \left[\begin{matrix} xcosθ-ysinθ\\ xsinθ+ycosθ\\ z\\ 1\\ \end{matrix}\right]$$</span>
+					</p>
+					<aside class="notes">
+						Z 轴的正方向由屏幕指向外面，因此绕z 轴选择其实就是在屏幕空间旋转，和2D 旋转一样。Z 轴旋转经常用来模拟飞机的横向滚动。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维旋转</h2>
+					<p>&nbsp;</p>
+					<p style="text-align: left;">
+					绕x方向旋转θ角
+					</p>
+					<p style="font-size: 24px;margin-left:140px">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} 1 & 0 & 0 & 0 \\0 &cosθ & -sinθ & 0 \\ 0 & sinθ & cosθ& 0 \\  0 & 0 & 0 & 1\end{matrix}\right] $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] $$</span><span style="float:left;"> $$ = \left[\begin{matrix} x \\ ycosθ-zsinθ\\ ysinθ+zcosθ\\ 1\\ \end{matrix}\right]$$</span>
+					</p>
+					<aside class="notes">
+						在模拟飞行领域中，绕x 轴选择可以看作是飞机的前倾和后仰。绕x 轴旋转时，x 坐标值是不会改变的。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维旋转</h2>
+					<p>&nbsp;</p>
+					<p style="text-align: left;">
+					绕y方向旋转θ角
+					</p>
+					<p style="font-size: 24px;margin-left:140px">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} cosθ & 0  & sinθ & 0 \\ 0 & 1 & 0 & 0 \\-sinθ & 0 & cosθ & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} xcosθ+ zsinθ \\ y \\ -xsinθ+ zcosθ\\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<aside class="notes">
+						在模拟飞行中，y 轴旋转可以看做是左右偏航。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维复合变换</h2>
+					<p>&nbsp;</p>
+					<p style="font-size: 24px">
+						$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] = \left[\begin{matrix} a & d  & g & l \\ b & e & h & m \\c & f & i & n  \\  p & q & r & s\end{matrix}\right] \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right]$$
+					</p>
+					<p class="fragment"><img height="254px" src="img/transform3d.jpg"/></p>
+					<aside class="notes">
+						
+					</aside>
+				</section>
+
+
+				<section>
+					<h2>三维对称变换</h2>
+					<p>
+					 三维对称变换可以是关于给定<b class="fragment highlight-red">对称轴</b>的或者是关于给定<b  class="fragment highlight-red">对称平面</b>的变换。
+					</p>
+					<p style="font-size: 24px;"></p>
+					<aside class="notes">
+						三维对称变换可以是关于给定对称轴的或者是关于给定对称平面的变换。三维对称矩阵的建立类似于二维的。关于给定对称轴的对称变换等价于绕此轴旋转180o。关于平面的对称变换等价于四维空间中的180o旋转。当对称平面是坐标平面时（x-y,或x-z,y-z），可以将此变换看成是左手系和右手系之间的转换。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维对称变换(面)</h2>
+					<p style="text-align: left;font-size: 22px;">
+						关于xoy面的对称 
+					</p>
+					<p style="font-size: 18px;margin-left: 280px;">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} 1 & 0  & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & -1 & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} x \\ y \\ -z \\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<p style="text-align: left;clear:both;font-size: 22px;">
+						关于xoz面的对称 
+					</p>
+					<p style="font-size: 18px;margin-left: 280px;">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} 1 & 0  & 0 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & 1 & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} x \\ -y \\ z \\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<p style="text-align: left;clear:both;font-size: 22px;">
+						关于yoz面的对称 
+					</p>
+					<p style="font-size: 18px;margin-left: 280px;">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} -1 & 0  & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} -x \\ y \\ z \\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<aside class="notes">
+						我们再回想一下对称会发生有什么现象，有什么特征？
+						三维对称变换可以是关于给定对称轴的或者是关于给定对称平面的变换。三维对称矩阵的建立类似于二维的。关于给定对称轴的对称变换等价于绕此轴旋转180o。关于平面的对称变换等价于四维空间中的180o旋转。当对称平面是坐标平面时（x-y,或x-z,y-z），可以将此变换看成是左手系和右手系之间的转换。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维对称变换(轴)</h2>
+					<p style="text-align: left;font-size: 22px;">
+						关于X轴的对称 
+					</p>
+					<p style="font-size: 18px;margin-left: 280px;">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} 1 & 0  & 0 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & -1 & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} x \\ -y \\ -z \\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<p style="text-align: left;clear:both;font-size: 22px;">
+						关于Y轴的对称 
+					</p>
+					<p style="font-size: 18px;margin-left: 280px;">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} -1 & 0  & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & -1 & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} -x \\ y \\ -z \\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<p style="text-align: left;clear:both;font-size: 22px;">
+						关于Z轴的对称 
+					</p>
+					<p style="font-size: 18px;margin-left: 280px;">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} -1 & 0  & 0 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & 1 & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} -x \\ -y \\ z \\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<aside class="notes">
+						三维对称变换可以是关于给定对称轴的或者是关于给定对称平面的变换。三维对称矩阵的建立类似于二维的。关于给定对称轴的对称变换等价于绕此轴旋转180o。关于平面的对称变换等价于四维空间中的180o旋转。当对称平面是坐标平面时（x-y,或x-z,y-z），可以将此变换看成是左手系和右手系之间的转换。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维错切变换</h2>
+					<p style="text-align: left;font-size: 22px;">
+						沿x方向的错切
+					</p>
+					<p style="font-size: 18px;margin-left: 280px;">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} 1 & d  & g & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} x+dy+gz \\ y \\ z \\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<p style="text-align: left;clear:both;font-size: 22px;">
+						沿y方向的错切
+					</p>
+					<p style="font-size: 18px;margin-left: 280px;">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} 1 & 0  & 0 & 0 \\ b & 1 & h & 0 \\ 0 & 0 & 1 & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} x \\ bx+y+hz	\\ z \\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<p style="text-align: left;clear:both;font-size: 22px;">
+						沿z方向的错切
+					</p>
+					<p style="font-size: 18px;margin-left: 280px;">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} 1 & 0  & 0 & 0 \\ 0 & 1 & 0 & 0 \\ c & f & 1 & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} x \\ y \\ cx+fy+z \\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<aside class="notes">
+						我们再回想一下斜切会发生有什么现象，有什么特征？
+						三维对称变换可以是关于给定对称轴的或者是关于给定对称平面的变换。三维对称矩阵的建立类似于二维的。关于给定对称轴的对称变换等价于绕此轴旋转180o。关于平面的对称变换等价于四维空间中的180o旋转。当对称平面是坐标平面时（x-y,或x-z,y-z），可以将此变换看成是左手系和右手系之间的转换。
+					</aside>
+				</section>
+
+				<section>
+					<h2>三维错切变换(复合)</h2>
+					<p>&nbsp;</p>
+					<p class="fragment" style="font-size: 24px;margin-left: 160px;">
+						<span style="float:left;">$$ \left[\begin{matrix} x'\\ y'\\ z'\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;color:yellow"> $$ \left[\begin{matrix} 1 & d  & g & 0 \\ b & 1 & h & 0 \\ c & f & 1 & 0  \\  0 & 0 & 0 & 1\end{matrix}\right]  $$</span><span style="float:left;"> $$ \times \left[\begin{matrix} x \\ y\\ z\\ 1\\ \end{matrix}\right] =  $$</span><span style="float:left;"> $$ \left[\begin{matrix} x+dy+gz \\  bx+y+hz \\ cx+fy+z \\ 1\\ \end{matrix}\right] $$</span>
+					</p>
+					<aside class="notes">
+						前端讲的都是在同一个方向上做错切，但实际应用中会同时在不同的方向做错切。这时我们该如何做？
+						其中，d和g为沿x方向的错切系数，SHy1和SHy2为沿y方向的错切系数，SHz1和SHz2为沿z方向的错切系数。
+					</aside>
+				</section>
+
+				<section>
+					<h2>齐次坐标</h2>
+					<p style="text-align: left;font-size: 24px;color:yellow">基本思想：</p>
+					<p style="text-align: left;font-size: 24px;">	把一个n维空间的几何问题，转换到n＋1维空间中去解决。<br>
+					<p style="text-align: left;font-size: 24px;color:yellow">形式：</p>
+					<p style="text-align: left;font-size: 24px;">用一个有n＋1个分量的向量去表示一个有n个分量的向量的方法
+						如二维平面上的点（x，y）的齐次坐标表示为（ hx，hy ，h），h是任一不为0的比例系数。
+						齐次坐标表示（x，y，h）转换成 二维笛卡儿直角坐标（x/h，y/h）
+					</p>
+					<p style="text-align: left;font-size: 24px;color:yellow">规格化齐次坐标</p>
+					<p style="text-align: left;font-size: 24px;">齐次坐标表示不是唯一的，通常将h＝1时的齐次坐标称为规格化的齐次坐标。</p>
+					<p style="text-align: left;font-size: 24px;color:yellow"></p>
+					<p style="text-align: left;font-size: 24px;"></p>
+					<p style="text-align: left;font-size: 24px;color:yellow"></p>
+					<p style="text-align: left;font-size: 24px;"></p>
+					<aside class="notes">
+						有没有感觉到我们的维数都多了一维？
+						使用齐次坐标表示法在计算机图形处理中的优越性：<br/>
+						（1）将平移、旋转、缩放3种变换用统一的方式，即用矩阵乘积的方式表达。提供了用矩阵运算将二维、三维或更高维空间中的一个点集从一个坐标系变换到另一个坐标系的有效方法。<br/>
+						（2）可以表示无穷远点<br/>
+						齐次坐标（hx，hy，h）<br/>
+						h<>0时，随着h的变化，每个齐次点代表了空间的一条线<br/>
+						将3个坐标都除以h，得到（x，y，1）代表该直线与（x，y，w）空间中h＝1平面交的点。<br/>
+						h＝0，代表该直线趋于无穷远点。
+
+					</aside>
+				</section>
+
+				<section>
+					<h2>矩阵在前端中的应用</h2>
+                    <ul>
+                        <li class="fragment">CSS3</li>
+                        <li class="fragment">Canvas</li>
+                        <li class="fragment">SVG</li>
+                        <li class="fragment">IE下滤镜</li>
+                    </ul>
+					<aside class="notes">
+						CSS3、canvas中的transform属性及方法
+					</aside>
+				</section>
+
+				<section>
+					<h2>转换方法</h2>
+					<p style="text-align: left;">CSS3 transform 属性：</p>
+                    <p style="text-align: left;">
+                      <a href="http://www.w3school.com.cn/cssref/pr_transform.asp" target="_blank">http://www.w3school.com.cn/cssref/pr_transform.asp</a>
+                    </p>
+					<p style="text-align: left;">Canvas的转换方法：</p>
+                    <p style="text-align: left;">
+                      <a href="http://www.w3school.com.cn/tags/html_ref_canvas.asp" target="_blank">http://www.w3school.com.cn/tags/html_ref_canvas.asp</a>
+                    </p>
+					<aside class="notes">
+						我们回顾一下他们中的间断的方法;
+					</aside>
+				</section>
+
+				<section>
+					<h2>背后...</h2>
+					<p><img src="img/csscanvasmatrix.jpg" /></p>
+					<aside class="notes">
+						看一下这张图我们就明白了。
+					</aside>
+				</section>
+
+				<section>
+					<h3>一个简单的三维引擎</h3>
+					<div style="font-size: 28px">
+						<p>三维坐标轴</p>
+						<p>
+							<a href="demo/coord3d.html" target="_blank">demo/coord3d.html</a>
+						</p>
+						<p>料子效果</p>
+						<p>
+							<a href="demo/particle.html" target="_blank">demo/particle.html</a><br/>
+							<a href="demo/heart.html" target="_blank">demo/heart.html</a><br/>
+							<a href="demo/particle2.html" target="_blank">demo/particle2.html</a><br/>
+							<a href="demo/particle3.html" target="_blank">demo/particle3.html</a><br/>
+						</p>
+						<p>线条</p>
+						<p>
+							<a href="demo/linedemo.html" target="_blank">demo/linedemo.html</a>
+						</p>
+						<p>六面体</p>
+						<p>
+							<a href="demo/cube.html" target="_blank">demo/cube.html</a>
+						</p>
+					</div>
+				</section>
+
+				<!-- <section>
+					<h2>矩阵的定义</h2>
+					<p>&nbsp;</p>
+					<p style="text-align: left;text-indent: 50px;">
+					$$ A = \begin{matrix} 1 & x & x^2 \\ 1 & y & y^2 \\ 1 & z & z^2 \\ \end{matrix} $$
+					</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<section>
+						<h2>Fragment Styles</h2>
+						<p>There's different types of fragments, like:</p>
+						<p class="fragment grow">grow</p>
+						<p class="fragment shrink">shrink</p>
+						<p class="fragment fade-out">fade-out</p>
+						<p class="fragment current-visible">current-visible</p>
+						<p class="fragment highlight-red">highlight-red</p>
+						<p class="fragment highlight-blue">highlight-blue</p>
+					</section>
+				</section>
+
+				<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+					<h2>Background Transitions</h2>
+					<p>
+						Different background transitions are available via the backgroundTransition option. This one's called "zoom".
+					</p>
+					<pre><code>Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
+				</section>
+
+				<section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
+					<h2>Background Transitions</h2>
+					<p>
+						You can override background transitions per-slide.
+					</p>
+					<pre><code style="word-wrap: break-word;">&lt;section data-background-transition="zoom"&gt;</code></pre>
+				</section> -->
+
+				<section style="text-align: left;">
+					<h1>THE END</h1>
+					<p>
+						- <a href="https://github.com/bigwhiteshark">https://github.com/bigwhiteshark</a>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				math: {
+			        mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+			        //config: 'AM_HTMLorMML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+			        config: 'TeX-MML-AM_HTMLorMML'  // See http://docs.mathjax.org/en/latest/config-files.html
+			    },
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/math/math.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)http://jun-lu.github.io/jun/canvas_sin_cos_tan.html -->
+<html lang="zh"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>平面坐标</title>
+
+	 <script src="../Coordinate.js"></script>
+	 <script src="../libs/dat.gui.min.js"></script>
+	 <script src="../libs/gl-matrix-min.js"></script>
+</head>
+<body>
+	<h1>演示矩阵操作</h1>
+	<canvas id="tutorial" width="1000" height="500">非常抱歉您的浏览器不支持 canvas</canvas>	
+	<script>
+		function init() {
+			var canvas = document.getElementById('tutorial');
+
+			var pc = new PlaneCoordinate(canvas);
+
+			pc.setProportion(0.02);
+			pc.setCalibration(50);
+			pc.init();
+			pc.draw();
+
+			function Triangle(p1,p2,p3) {
+				this.p1 = p1;
+				this.p2 = p2;
+				this.p3 = p3;
+			}
+
+			//y=sin(x)、y=cos(x)
+			var p = Triangle.prototype;
+			
+			p.draw = function(){
+				 var p1 = pc.project(this.p1.x, this.p1.y);
+				 var p2 = pc.project(this.p2.x, this.p2.y);
+				 var p3 = pc.project(this.p3.x, this.p3.y);
+				 pc.drawLine(p1.x,p1.y,p2.x,p2.y);
+				 pc.drawLine(p2.x,p2.y,p3.x,p3.y);
+				 pc.drawLine(p3.x,p3.y,p1.x,p1.y);
+			}
+			p.translate = function(tx,ty){
+				var trans_mat3 = [];
+				var trans_mat3 = mat3.copy(trans_mat3,[1,0,0,0,1,0,tx,ty,1]);
+
+				var p1_mat3 = [];
+				var p2_mat3 = [];
+				var p3_mat3 = [];
+
+				var vp1 = vec3.create(this.p1.x,this.p1.y,1); 
+				var vp2 = vec3.create(this.p2.x,this.p2.y,1); 
+				var vp3 = vec3.create(this.p3.x,this.p3.y,1); 
+
+			
+				p1_mat3 = mat3.translate(p1_mat3,trans_mat3,vp1);
+				p2_mat3 = mat3.translate(p2_mat3,trans_mat3,vp2);
+				p3_mat3 = mat3.translate(p3_mat3,trans_mat3,vp3);
+
+
+				var p1_dest_vec3 = [];
+				var p2_dest_vec3 = [];
+				var p3_dest_vec3 = [];
+				
+				vec3.transformMat3(p1_dest_vec3);
+
+				console.log(p1_mat3)
+				console.log(p2_mat3)
+				console.log(p3_mat3)
+			}
+			p.roateX = function(){
+
+			}
+			var triangle = new Triangle({x:1,y:1},{x:2,y:1},{x:1.5,y:3});
+		    triangle.draw();
+		    triangle.translate(2,2);
+
+	   		var controls = new function () {
+	            this.trigonometric  ='y=sin(x)'; //三角函数
+	        }
+	       /* var gui = new dat.GUI();
+			gui.add(controls, 'trigonometric', ['y=sin(x)', 'y=cos(x)', 'y=tan(x)','y=asin(x)','y=acos(x)','y=atan(x)']).onChange(function (e) {
+				pc.init();
+				pc.draw()
+		        mathematical.draw(e,'trigonometric');
+		    });
+			gui.add(controls, 'proportional', ['y=2x', 'y=-2x', 'y=4x','y=2x+2','y=2x-2','y=-2x']).onChange(function (e) {
+				pc.init();
+				pc.draw()
+		        mathematical.draw(e,'proportional');
+		    });
+			gui.add(controls, 'parabola', ['y=1/2*x*x', 'y=x*x', 'y=2*x*x', 'y=3*x*x','y=2*x*x+3x-1']).onChange(function (e) {
+				pc.init();
+				pc.draw()
+		        mathematical.draw(e,'parabola');
+		    });
+
+			gui.add(controls, 'circle', ['x²+y²=r²']).onChange(function (e) {
+				pc.init();
+				pc.draw()
+		        mathematical.draw(e,'parabola');
+		    });*/
+
+			
+
+		}
+		window.onload = init;
+	</script>
+</body>
+</html>

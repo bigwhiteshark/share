@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>碰撞检测</title>
+        <script type="text/javascript" src="util.js"></script>
+        <script type="text/javascript" src="Ball.js"></script>
+        <script>
+        /*
+            输入：
+            ball1:第一个球的对象；
+            ball2:第二个球的对象；
+            输出：相交的点
+        */
+        function checkball1Collision(ball1,ball2){
+            var radius1 = ball1.radius;
+            var radius2 = ball2.radius;
+
+            var x1 = ball1.x, y1 = ball1.y;
+            var x2 = ball2.x, y2 = ball2.y;
+
+            return Math.pow(y2-y1,2)+Math.pow(x2-x1,2) <= Math.pow(radius1+radius2,2); 
+        }
+
+        </script>
+    </head>
+    <body>
+        <canvas id="myCanvas" style="border:1px solid #000" width="400" height="400"></canvas>
+        <div id="info"></div>
+        <script type="text/javascript">
+            window.onload=function(){
+                var canvas=document.getElementById("myCanvas");
+                var info=document.getElementById("info");
+                var ctx=canvas.getContext("2d");
+
+                var ball1=new Ball(20,'#ff0000');
+                ball1.x=canvas.width/2;
+                ball1.y=canvas.height/2;
+
+                var ball2=new Ball(20,'#0000ff');
+                ball2.stepX = 2;
+                ball2.stepY = 3;
+
+                var animId,num=0;
+                (function animationLoop(){
+                    animId = window.requestAnimFrame(animationLoop,canvas);
+                    ctx.clearRect(0,0,canvas.width,canvas.height);
+                    ball1.play(canvas);
+                    ball2.play(canvas);
+                    var collision = checkball1Collision(ball1,ball2);
+                    if(num>10){
+                        info.innerHTML = "";
+                        num = 0;
+                    }
+                    if(collision){
+                        ball1.dirX=-ball1.dirX;
+                        ball1.dirY=-ball1.dirY;
+                        ball2.dirX=-ball2.dirX;
+                        ball2.dirY=-ball2.dirY;
+                        ball1.stepX=Math.ceil(Math.random()*3+3);
+                        ball1.stepY=Math.ceil(Math.random()*2+3);
+
+
+                        var ix = (ball2.x+ball1.x)/2;
+                        var iy = (ball2.y+ball1.y)/2;
+
+                       /* ctx.font ="20px Georgia";
+                        ctx.fillText(ix+","+iy,ix,iy);*/
+                        var p = document.createElement("p");
+                        p.innerHTML = "碰撞点："+ix+","+iy;
+                        info.appendChild(p);
+                        ctx.fillStyle="#ffff00";
+                        ctx.fillRect(0,0,canvas.width,canvas.height);
+                        num++;
+                    }else{ 
+                        ball2.stepX=Math.ceil(Math.random()*2+3);
+                        ball2.stepY=Math.ceil(Math.random()*3+3);
+                    }
+                })();
+
+                /*ball2.x=canvas.width/2;
+                ball2.y=canvas.height/2;
+                ball2.run(canvas);*/
+
+                 //初始化角度及角度增加系数
+                // var angle=0;
+                // var vr=1*Math.PI/180;
+
+                /*var dirX=1;
+                var dirY=1;
+                var stepX=5;
+                var stepY=3;
+
+                var dirX2=1;
+                var dirY2=1;
+                var stepX2=4;
+                var stepY2=2;
+                (function animationLoop(){
+                    window.requestAnimFrame(animationLoop,canvas);
+                    context.clearRect(0,0,canvas.width,canvas.height);
+                    
+                    //ball1.x=canvas.width/2*(1-Math.cos(angle));
+                    //angle+=vr;
+
+                    if(ball1.x >= canvas.width){
+                        dirX = -1;
+                    }
+                    if(ball1.x <=0){
+                        dirX = 1;
+                    }
+                    if(ball1.y >= canvas.height){
+                        dirY = -1;
+                    }
+                    if(ball1.y <=0){
+                        dirY = 1;
+                    }
+
+                    ball1.x += stepX * dirX;
+                    ball1.y += stepY * dirY;
+                    ball1.paint(context);
+
+                    if(ball2.x >= canvas.width){
+                        dirX2 = -1;
+                    }
+                    if(ball2.x <=0){
+                        dirX2 = 1;
+                    }
+                    if(ball2.y >= canvas.height){
+                        dirY2 = -1;
+                    }
+                    if(ball2.y <=0){
+                        dirY2 = 1;
+                    }
+
+                    ball2.x += stepX2 * dirX2;
+                    ball2.y += stepY2 * dirY2;
+                    ball2.paint(context);
+                })();*/
+            };
+        </script>
+    </body>
+</html>
